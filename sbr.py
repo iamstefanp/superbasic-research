@@ -26,6 +26,19 @@ TWO LAYERS
     THIS FILE     control     — what you must do. Non-negotiable.
     standards/   competence  — how to do it well. Consulted on demand.
 
+WHO EXECUTES THIS
+    agent_executor (the callable run_sbr() takes) can be anything that
+    matches its contract. It does NOT have to be a real tool-using
+    agent — and testing found that gap matters: pasted as a bare system
+    prompt with no real search tool wired in, some models fabricate
+    sources and dress the fabrication in this method's own scoring
+    language (tests/CROSS-MODEL.md). harness/executor.py is a reference
+    agent_executor backed by real function-calling and a real search
+    API — the harness inserts genuine tool results into the
+    conversation and overrides any source whose URL didn't actually
+    come from one, rather than trusting the model's self-report. Use it
+    when the sourcing needs to be real, not just formatted like it is.
+
 Locked S270826-2 (2026-08-27). Supersedes all prior statements of the process.
 """
 
@@ -1184,6 +1197,85 @@ def gate_verify(pool: list, claims: list, mode: str) -> tuple:
                 str(c.get("claim", "?"))[:60] for c in overclaimed))
 
     return (not failures, failures)
+
+
+def detect_fabrication_patterns(pool: list, claims: list) -> list:
+    """
+    Soft tripwires, not gates. Returns a list of warning strings —
+    nothing here blocks a run the way gate_verify's failures do, because
+    every pattern below has real false positives (legitimately
+    convergent good sourcing looks similar to lazily-uniform fabricated
+    sourcing from the outside). Call this alongside gate_verify and
+    surface the warnings to whoever reads the run — a human decides what
+    they mean, this function only decides what's worth a second look.
+
+    Found by testing (tests/CROSS-MODEL.md): Kimi and DeepSeek each
+    fabricated a full source table under identical conditions, and their
+    two invented numbers for the same fact did not agree with each
+    other. That specific shape — sources that are suspiciously uniform
+    with each other, or that disagree on what should be one number — is
+    what these checks are aimed at. Neither proves fabrication; both are
+    cheap enough to be worth flagging every time they occur.
+    """
+    import difflib
+    import re
+
+    warnings = []
+
+    # PATTERN 1: independent-looking sources whose scores cluster tightly
+    # AND whose stated facts read as near-paraphrases of each other. Real
+    # independent reporting on the same event often agrees on substance
+    # but rarely converges on near-identical phrasing; several models
+    # tested fabricated a source table where every entry read like a
+    # slight rewording of the same invented paragraph.
+    scored = [s for s in pool if isinstance(s.get("score"), (int, float))
+              and s.get("facts")]
+    for i, a in enumerate(scored):
+        for b in scored[i + 1:]:
+            if abs(a["score"] - b["score"]) > 2:
+                continue
+            similarity = difflib.SequenceMatcher(
+                None, str(a["facts"])[:500], str(b["facts"])[:500]
+            ).ratio()
+            if similarity > 0.6:
+                warnings.append(
+                    f"SCORE/PHRASING CLUSTER — sources "
+                    f"{a.get('id', '?')!r} and {b.get('id', '?')!r} score "
+                    f"within 2 points of each other and their facts text "
+                    f"is {similarity:.0%} similar — worth checking these "
+                    f"are genuinely independent reporting, not one "
+                    f"invented paragraph restated twice")
+
+    # PATTERN 2: claims that plausibly describe the same fact but state
+    # different numbers for it. A crude proxy for "the same fact" —
+    # heavy term overlap in the claim text — but cheap, and it is
+    # exactly the pattern that caught the Kimi-vs-DeepSeek disagreement
+    # on Anthropic's valuation, just applied within one run instead of
+    # across two.
+    numeric_claims = [c for c in claims if c.get("claim")
+                       and re.search(r"\d", str(c["claim"]))]
+    for i, a in enumerate(numeric_claims):
+        for b in numeric_claims[i + 1:]:
+            a_words = set(re.findall(r"[a-z]{4,}", str(a["claim"]).lower()))
+            b_words = set(re.findall(r"[a-z]{4,}", str(b["claim"]).lower()))
+            if not a_words or not b_words:
+                continue
+            overlap = len(a_words & b_words) / len(a_words | b_words)
+            if overlap < 0.4:
+                continue
+            a_nums = set(re.findall(r"\d[\d,.]*", str(a["claim"])))
+            b_nums = set(re.findall(r"\d[\d,.]*", str(b["claim"])))
+            if a_nums and b_nums and not (a_nums & b_nums):
+                warnings.append(
+                    f"NUMERIC DISAGREEMENT — claims "
+                    f"{str(a.get('claim'))[:50]!r} and "
+                    f"{str(b.get('claim'))[:50]!r} look like they describe "
+                    f"the same thing ({overlap:.0%} term overlap) but cite "
+                    f"different numbers ({a_nums} vs {b_nums}) — resolve "
+                    f"via reconciliation-protocol.md before reporting "
+                    f"either as CONFIRMED")
+
+    return warnings
 
 
 def confirmable(claim: dict, pool: list, mode: str) -> bool:

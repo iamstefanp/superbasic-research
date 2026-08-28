@@ -121,6 +121,57 @@ the structure still looks nice.
 
 **Deliberately not testing:** Grok, per direction.
 
+## The staged fix, and where it actually stands
+
+Full plan: `~/.claude/plans/sorted-hopping-creek.md` (or wherever this
+repo's maintainer keeps it — the plan itself, not just its outcome, is
+worth reading, since it's explicit about what each stage does and does
+not solve). Summary, same day as Round 1.5:
+
+- **Stage 0 (disclosure)** — shipped. `SKILL.md`/`README.md` now say
+  plainly, near the top, not to trust bare-paste mode for anything that
+  matters.
+- **Stage 1 (falsifiable URLs)** — shipped. Every source now needs a
+  real, resolvable URL; `gate_verify()`'s new URL SHAPE check rejects
+  placeholders. Doesn't stop fabrication — makes it Cmd-clickable.
+- **Stage 2 (real tool-calling harness)** — code shipped
+  (`harness/executor.py`, `harness/search_provider.py`, Tavily-backed).
+  **This is the only stage that actually prevents fabrication, and only
+  for governed-mode execution** (running `sbr.py` as code with this
+  executor — not for bare-paste `SKILL.md`). First live test against
+  Kimi K2 (the worst fabricator in Round 1) found a real bug in the
+  harness itself: the enforcement function looked for a source list
+  under specific key names (`sources` / `Intel Items`) and a lowercase
+  `url` field; Kimi's real output used `Intel_Items` and `URL`, so the
+  enforcement silently never ran on the first attempt — the exact "we
+  hope the model behaves" failure this whole effort exists to catch,
+  just relocated into the fix instead of the model. Fixed by matching
+  source lists by *shape* (a list of dicts with some case of a url key)
+  instead of by exact name. Live re-test with the fix: see the Round 3
+  entry below once it completes — do not treat the harness as trustworthy
+  until that entry says so with real numbers, not intentions.
+- **Stage 3 (post-hoc spot-audit)** — shipped, `tools/verify_sources.py`.
+  Tested against a real blocked source (Reuters 401s a bare scraper —
+  correctly reported FAIL rather than guessing) and a real resolvable
+  one with both a true and an absurd claim attached (correctly PASS and
+  UNVERIFIABLE respectively). This is a backstop for bare-paste outputs,
+  not a primary control.
+- **Stage 4 (heuristic tripwire + Portability battery card)** — shipped.
+  `sbr.py`'s new `detect_fabrication_patterns()` flags (never blocks)
+  score/phrasing clustering and numeric disagreement between claims that
+  look like they describe the same fact — tested against synthetic
+  versions of exactly what Kimi and DeepSeek did, and against a negative
+  control (zero false positives). `tests/BATTERY.md` now has an eleventh
+  card, **P-T1**, formalizing this file's rounds into a standing
+  regression test instead of an ad hoc log.
+
+## Round 3 — pending, live harness verification
+
+Re-running Kimi K2 (Round 1's worst fabricator) through the fixed
+Stage 2 harness. Result to be logged here once the live run completes —
+this entry exists so the harness's status is never claimed as verified
+without a dated result underneath it.
+
 ## Status
 
 **Round 1 (Kimi, DeepSeek, GPT-5, Gemini): done, disclosed, fix applied
@@ -128,7 +179,8 @@ same-session.**
 **Round 1.5 (Llama 70B, Ollama/Llama 3.2 local, Perplexity-blocked):
 done — found the fix insufficient on Llama 70B, found a third failure
 shape on the small local model, found Perplexity needs its own key.**
-**Round 2: not yet run** — needs a fix that actually stops Llama 70B,
-Qwen, a working Mistral call, a larger Ollama model, and Perplexity with
-its own key, before "works across models" can honestly move from
-"designed to" to "verified to."
+**Stages 0/1/3/4: shipped and unit-tested.** **Stage 2: code shipped,
+one real bug found and fixed during its own first test, live
+end-to-end verification in progress (Round 3, above).**
+**Round 2 (Qwen, Mistral retry, larger Ollama, Perplexity with its own
+key): not yet run** — needs Stage 2 confirmed working first.
