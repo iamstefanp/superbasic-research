@@ -29,6 +29,7 @@ import requests
 import search_provider
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+MISTRAL_URL = "https://api.mistral.ai/v1/chat/completions"
 OLLAMA_URL = os.environ.get("SBR_OLLAMA_URL", "http://localhost:11434/api/chat")
 DEFAULT_MODEL = os.environ.get("SBR_HARNESS_MODEL", "openai/gpt-4o")
 DEFAULT_BACKEND = os.environ.get("SBR_HARNESS_BACKEND", "openrouter")
@@ -95,9 +96,16 @@ def _call_model(messages, model=DEFAULT_MODEL, backend=DEFAULT_BACKEND,
     "tool_calls": [{"id": str, "function": {"name": str,
     "arguments": dict|str}}]}}.
 
-    Two backends, because they're genuinely different APIs, not just
+    Three backends, because they're genuinely different APIs, not just
     different model names:
     - openrouter: cloud, any tool-calling-capable model on OpenRouter.
+    - mistral: cloud, Mistral's own API direct — added specifically
+      because OpenRouter's BYOK routing for Mistral was confirmed broken
+      (2026-08-28: a verified-working key, confirmed active on both
+      Mistral's own API and OpenRouter's own key-test, still never got
+      attempted by OpenRouter — every call fell through to the
+      rate-limited shared pool regardless). Going direct sidesteps that
+      routing gap entirely rather than waiting on OpenRouter to fix it.
     - ollama: local, zero cloud dependency, which is exactly the
       environment where "does this model even get real tools" matters
       most — most bare-paste users running a local model have no tool
@@ -116,9 +124,31 @@ def _call_model(messages, model=DEFAULT_MODEL, backend=DEFAULT_BACKEND,
                                 f"— {resp.text[:500]}")
         return resp.json()  # already {"message": {...}} shaped
 
+    if backend == "mistral":
+        key = os.environ.get("MISTRAL_API_KEY")
+        if not key:
+            raise HarnessError("MISTRAL_API_KEY is not set.")
+        resp = requests.post(
+            MISTRAL_URL,
+            headers={"Authorization": f"Bearer {key}",
+                     "Content-Type": "application/json"},
+            json={
+                "model": model,
+                "messages": messages,
+                "tools": TOOLS,
+                "max_tokens": max_tokens,
+            },
+            timeout=180,
+        )
+        if resp.status_code != 200:
+            raise HarnessError(f"Mistral call failed: HTTP {resp.status_code} "
+                                f"— {resp.text[:500]}")
+        data = resp.json()
+        return {"message": data["choices"][0]["message"]}  # OpenAI-compatible shape
+
     if backend != "openrouter":
         raise HarnessError(f"Unknown backend: {backend!r} "
-                            f"(expected 'openrouter' or 'ollama')")
+                            f"(expected 'openrouter', 'mistral', or 'ollama')")
 
     key = os.environ.get("OPENROUTER_API_KEY")
     if not key:
