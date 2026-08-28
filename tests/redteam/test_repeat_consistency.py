@@ -73,7 +73,14 @@ def run():
             spot_checks = _spot_check_sample(sources)
             mismatches = [c for c in spot_checks if not c["reachable"]]
 
-            if mismatches:
+            # A run with zero sources is NOT a trivial pass — an empty
+            # result with nothing to spot-check must not silently count
+            # as "consistent." Flagged distinctly so it can't hide inside
+            # a clean-looking PASS count (see PROTOCOL.md Amendment 1).
+            if len(sources) == 0:
+                verdict = "FLAG"
+                all_pass = False
+            elif mismatches:
                 all_pass = False
                 verdict = "FAIL"
             else:
@@ -87,6 +94,7 @@ def run():
                 "run": i + 1, "n_sources": len(sources),
                 "n_retrieved_true": n_retrieved, "n_flagged_false": n_flagged,
                 "spot_checks": spot_checks, "verdict": verdict,
+                "phase4_raw_outputs": card4.outputs,
             })
 
         per_target_results.append({"model": model, "backend": backend, "runs": target_runs})

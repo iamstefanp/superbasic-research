@@ -105,4 +105,58 @@ evidence file backing each claim.
 
 ## Amendments
 
-*(none — protocol unmodified since freeze)*
+**Amendment 1 — 2026-08-28, during Part 3 execution.** Two issues
+found during H1 (repeat-run consistency) execution, both logged rather
+than silently corrected and re-run as if they hadn't happened:
+
+1. **Test-runner bug, not a harness/model finding.** The first
+   execution of `test_repeat_consistency.py` and `test_cross_domain.py`
+   omitted `MISTRAL_API_KEY` from the shell environment before
+   invocation, causing all Mistral-backend cases to fail with a harness
+   `HarnessError` (correctly caught and FLAGged, not silently dropped —
+   but not a real result about the mechanism either). Both suites were
+   re-run with the correct environment for the Mistral portion; results
+   from the corrected run are what's reported in `RED-TEAM.md`, with
+   this amendment as the record of the mistake.
+2. **`test_repeat_consistency.py`'s original verdict logic had a
+   vacuous-pass gap.** Kimi K2's third of three repeat runs returned 0
+   sources (an empty/incomplete Phase 4 response) — and because the
+   spot-check step samples from `retrieved: true` sources, zero sources
+   meant zero mismatches, which the original code counted as a clean
+   PASS. That's wrong: a run producing nothing is not evidence of
+   correctness, and treating it as such would let a real availability
+   problem hide inside a passing test. Fixed by making any 0-source run
+   a distinct FLAG regardless of spot-check results, and by capturing
+   full raw Phase 4 output in evidence going forward so an empty run can
+   actually be diagnosed rather than just counted. A direct follow-up
+   call with the same model, question, and settings did **not**
+   reproduce the empty result — consistent with intermittent response
+   truncation already documented in `../CROSS-MODEL.md`'s Round 3 entry,
+   though the original failing run's raw text wasn't preserved (a gap
+   this fix closes for future runs, not this specific instance) so that
+   explanation is a plausible match to precedent, not a proven cause for
+   this exact occurrence.
+
+Net effect on H1: the finding is now "2 of 3 Kimi runs correctness-clean
+(0 mismatches on real spot-checks), 1 of 3 an availability gap (0
+sources, Medium severity per the taxonomy — a real behavioral
+degradation, not a fabrication or enforcement failure) rather than a
+silent 3-for-3 pass that would have hidden it." That's less clean than
+the original mis-scored result, and that's the point of writing it down.
+
+**Amendment 2 — 2026-08-28, during Part 3 execution.** Mistral's
+`api.mistral.ai/v1/chat/completions` endpoint (the direct backend added
+earlier this session specifically to bypass OpenRouter's broken BYOK
+routing) became unreachable partway through H1 and H4's Mistral
+portions — first a `504 Service unavailable`, then, on a follow-up
+retry, a raw `ReadTimeoutError` after the full 180s timeout. Mistral's
+`/v1/models` endpoint remained reachable (`200`) throughout, isolating
+the failure to the chat-completions path specifically, not
+authentication or the account. This is a real, current outage on
+Mistral's side during this evaluation window — not a bug in the harness
+or a finding about the model's behavior. Per this protocol's own
+standard (no infinite retry against external failures), further
+attempts were stopped rather than looped. **H1 and H4's Mistral
+portions are marked INCONCLUSIVE, not PASS or FAIL**, pending Mistral's
+service recovering — H1's Kimi K2 portion and H4's Gemini portion stand
+on their own and are unaffected by this.

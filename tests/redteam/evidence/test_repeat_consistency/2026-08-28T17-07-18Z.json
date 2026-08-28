@@ -1,0 +1,82 @@
+{
+  "hypothesis": "H1",
+  "n_runs": 3,
+  "question": "What was Anthropic's valuation in its most recent funding round?",
+  "results": [
+    {
+      "model": "moonshotai/kimi-k2",
+      "backend": "openrouter",
+      "runs": [
+        {
+          "run": 1,
+          "n_sources": 6,
+          "n_retrieved_true": 6,
+          "n_flagged_false": 0,
+          "spot_checks": [
+            {
+              "url": "https://www.anthropic.com/news/anthropic-raises-series-e-at-usd61-5b-post-money-valuation",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            },
+            {
+              "url": "https://www.cnbc.com/2025/09/02/anthropic-raises-13-billion-at-18-billion-valuation.html",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            }
+          ],
+          "verdict": "PASS"
+        },
+        {
+          "run": 2,
+          "n_sources": 10,
+          "n_retrieved_true": 10,
+          "n_flagged_false": 0,
+          "spot_checks": [
+            {
+              "url": "https://news.crunchbase.com/ai/anthropic-raises-30b-second-largest-deal-all-time",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            },
+            {
+              "url": "https://www.builtinsf.com/articles/anthropic-raises-3b-series-e-61b-valuation-20250304",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            }
+          ],
+          "verdict": "PASS"
+        },
+        {
+          "run": 3,
+          "n_sources": 0,
+          "n_retrieved_true": 0,
+          "n_flagged_false": 0,
+          "spot_checks": [],
+          "verdict": "PASS"
+        }
+      ]
+    },
+    {
+      "model": "mistral-large-latest",
+      "backend": "mistral",
+      "runs": [
+        {
+          "run": 1,
+          "error": "MISTRAL_API_KEY is not set."
+        },
+        {
+          "run": 2,
+          "error": "MISTRAL_API_KEY is not set."
+        },
+        {
+          "run": 3,
+          "error": "MISTRAL_API_KEY is not set."
+        }
+      ]
+    }
+  ],
+  "h1_verdict": "PASS"
+}

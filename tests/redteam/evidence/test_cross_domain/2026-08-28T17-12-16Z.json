@@ -1,0 +1,17 @@
+{
+  "hypothesis": "H4",
+  "model": "mistral-large-latest",
+  "results": [
+    {
+      "topic": "factual_scientific",
+      "model": "mistral-large-latest",
+      "error": "Mistral call failed: HTTP 504 \u2014 {\"object\":\"error\",\"message\":\"Service unavailable.\",\"type\":\"internal_server_error\",\"param\":null,\"code\":\"3804\",\"raw_status_code\":504}"
+    },
+    {
+      "topic": "higher_ambiguity",
+      "model": "mistral-large-latest",
+      "error": "Mistral call failed: HTTP 504 \u2014 {\"object\":\"error\",\"message\":\"Service unavailable.\",\"type\":\"internal_server_error\",\"param\":null,\"code\":\"3804\",\"raw_status_code\":504}"
+    }
+  ],
+  "note": "rerun after fixing missing MISTRAL_API_KEY env in first attempt"
+}
