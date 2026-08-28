@@ -23,6 +23,34 @@ way to report finding nothing.
 
 ---
 
+## Read this before you paste it anywhere
+
+This file's confidence machinery — CONFIRMED, source scoring,
+independence checks — assumes the model executing it has a **real,
+callable search or fetch tool in this specific conversation.** Pasted as
+a bare system prompt with no tool wired in, models have been observed —
+including large, capable, well-known ones — fabricating entire source
+tables (fake outlets, fake dates, fake quotes), running the fabrication
+through this method's own scoring apparatus, and stamping the result
+CONFIRMED. That is worse than an ordinary hallucination, because it
+reads as *more* credible, not less. See `tests/CROSS-MODEL.md` for the
+actual, ongoing test results — which models did this, which didn't, and
+why.
+
+One concrete guard against it: **every source needs a real, resolvable
+URL** — a full link with an actual scheme and domain, not an outlet
+name, not "various sources," not a placeholder. If you cannot produce
+one, the source is UNKNOWN, not a citation. This doesn't prove a source
+is real, but it makes a fake one falsifiable by anyone in seconds
+instead of requiring their own investigation.
+
+**Do not use bare-paste mode for any claim where being wrong carries
+real cost.** The safe way to run this method is with a real search tool
+actually wired into the request — see the reference harness once it
+ships, or run `sbr.py` as code with a real tool-using executor.
+
+---
+
 ## How to run it
 
 **Read `sbr.py` and execute it.** It is the method. You are the runtime.

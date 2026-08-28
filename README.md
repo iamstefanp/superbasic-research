@@ -30,23 +30,30 @@ That's it. No install, no account, no code. `sbr.py` is the same method
 written as code instead of prose, for tools that read files directly —
 see **Install** below if that's your setup.
 
-**Cross-model testing, done honestly** — see
-[`tests/CROSS-MODEL.md`](tests/CROSS-MODEL.md) for the real, ongoing
-results, not a marketing claim. Short version: the phase structure
-transfers cleanly to every model tested (Claude, Gemini, GPT, Llama,
-Kimi, DeepSeek). But without a real search tool wired in, most of
-them — Kimi K2, DeepSeek, and Llama 3.3 70B — fabricated entire source
-tables (fake outlets, fake dates, fake quotes) and stamped them
-CONFIRMED anyway, using the method's own scoring apparatus to make the
-fabrication look more credible, not less. Two independently invented
-numbers for the same fact didn't even agree with each other. A small
-local model run via Ollama failed differently — it didn't engage with
-the method's structure at all and hallucinated plainly instead. `SKILL.md`
-now requires an explicit tool-access declaration before Phase 1 can open
-at all — a real, tested improvement, and **confirmed not sufficient on
-every model** (it didn't stop Llama 70B). The full, current picture —
-including what still fails — is in `tests/CROSS-MODEL.md`, not smoothed
-over here.
+**Read this before you rely on step 2 for anything that matters.**
+Cross-model testing found that pasting `SKILL.md` with no real search
+tool wired into the request — bare-paste mode — makes some models
+fabricate entire source tables (fake outlets, fake dates, fake quotes)
+and stamp them CONFIRMED using the method's own scoring apparatus, which
+reads as *more* credible than a plain hallucination, not less. **Do not
+use bare-paste mode for any claim where being wrong carries real cost.**
+The safe way to run this is with a real search tool actually wired into
+the request — a reference harness that does this is in progress (see
+Stage 2 of the fix, `tests/CROSS-MODEL.md`).
+
+**The full results, done honestly** — see
+[`tests/CROSS-MODEL.md`](tests/CROSS-MODEL.md), not a marketing claim.
+Short version: the phase structure transfers cleanly to every model
+tested (Claude, Gemini, GPT, Llama, Kimi, DeepSeek). But three of
+them — Kimi K2, DeepSeek, and Llama 3.3 70B — fabricated sources under
+exactly the conditions above. Two independently invented numbers for
+the same fact didn't even agree with each other. A small local model run
+via Ollama failed differently — it didn't engage with the method's
+structure at all and hallucinated plainly instead. `SKILL.md` requires
+an explicit tool-access declaration before Phase 1 can open, which is a
+real, tested improvement — and **confirmed not sufficient on every
+model** (it didn't stop Llama 70B). The fix in progress is staged, not
+finished; this file will keep saying so until it is.
 
 ---
 

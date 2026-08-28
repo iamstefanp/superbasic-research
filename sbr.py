@@ -668,11 +668,17 @@ You go and get it. This is the only phase that searches.
 
 1. Execute every query from the Plan. Every one. A query skipped is a
    gap you will not know you have.
-2. For each result record: Source Name · URL · Publication Date ·
-   Accessed Date · Persona · Media Mode · Key Facts · Confidence.
-   Tag persona from standards/source-personas.md's twelve named personas
-   — exactly one of them, not a paraphrase. Tag media mode as Paid, Owned
-   or Earned. A gate at CHECK will reject a tag that isn't one of these.
+2. For each result record: Source Name · the exact literal query string
+   you used to find it · a full, resolvable URL (a real scheme and
+   domain — never a placeholder like "example.com" or a bare "various
+   outlets") · Publication Date · Accessed Date · Persona · Media Mode ·
+   Key Facts · Confidence. Tag persona from
+   standards/source-personas.md's twelve named personas — exactly one of
+   them, not a paraphrase. Tag media mode as Paid, Owned or Earned. A
+   gate at CHECK will reject a tag that isn't one of these, and a gate at
+   VERIFY will reject a URL that isn't real. If you cannot produce an
+   actual, resolvable URL, the source is UNKNOWN — do not populate the
+   field with something that merely looks like one.
 3. Capture, do not analyse. Interpretation is Phase 7's job. Analysing
    now means you stop looking once you have a story.
 4. Log every attempt, including the ones that found nothing. A search
@@ -708,9 +714,11 @@ is UNKNOWN. A plausible fabrication is the worst possible output — it is
 indistinguishable from good work until someone acts on it.
         """,
         "doc_schema": [
-            "Intel Items — source · URL · published · accessed · persona "
-            "(one of the twelve) · media mode (Paid/Owned/Earned) · "
-            "facts · confidence (repeat per find)",
+            "Intel Items — source · query_used (the literal search "
+            "string) · URL (real, resolvable — UNKNOWN if none) · "
+            "published · accessed · persona (one of the twelve) · "
+            "media mode (Paid/Owned/Earned) · facts · confidence "
+            "(repeat per find)",
             "Failed Retrievals — what would not open, and what you did",
             "Anomalies — findings that contradict the emerging picture",
             "KRQ Coverage — per cluster: COVERED or GAP, and CANONICAL or "
@@ -875,7 +883,9 @@ PART TWO — THE RECORD. Headed clearly as the audit trail, not required
 reading. Everything Part One asserts must be traceable here.
 1. Status — COMPLETE or PARTIAL, and which gate failed if PARTIAL.
 2. Claim table — every claim, its sources, its confidence label.
-3. Sources — name, URL, date, band, persona.
+3. Sources — name, a full resolvable URL (real scheme and domain — if
+   you cannot produce one, the source belongs in Searched And Not Found
+   instead, not here with a placeholder), date, band, persona.
 4. Searched And Not Found (Law 5) — full list, "nothing" if genuinely
    nothing, section never omitted.
 5. Confidence summary — count per label.
@@ -894,6 +904,8 @@ that the person it was written for has to dig for the answer.
             "PART TWO — THE RECORD",
             "  Status — COMPLETE or PARTIAL (and which gate failed)",
             "  Claim Table — claim · sources · confidence",
+            "  (every Source below carries a real, resolvable URL — see "
+            "gate_verify's URL SHAPE check)",
             "  Hypothesis Final State",
             "  Sources — name · URL · date · band · persona",
             "  Searched And Not Found",
@@ -1022,6 +1034,45 @@ def gate_check(pool: list, krq_clusters: list, mode: str) -> tuple:
     return (not failures, failures)
 
 
+# A regex cannot tell a real URL from a fabricated one — that needs an
+# actual fetch (see the reference harness this is Stage 1 of). What it
+# CAN catch, cheaply: a fabrication that didn't even bother to look like
+# a URL. Found via cross-model testing (tests/CROSS-MODEL.md, Round
+# 1/1.5) that unconstrained models sometimes cite a bare outlet name or
+# an obvious placeholder instead of a link at all. This turns that
+# specific shortcut into a hard failure — it does not, and cannot,
+# confirm the URL resolves to something real.
+_URL_PLACEHOLDER_MARKERS = (
+    "example.com", "example.org", "yourdomain", "placeholder",
+    "various outlets", "various sources", "several outlets", "n/a",
+    "unknown url", "tbd",
+)
+
+
+def looks_like_a_real_url(value) -> bool:
+    """
+    Structural check only: has a scheme and a domain, and isn't a known
+    placeholder pattern. Passing this proves nothing about truth — only
+    that whoever wrote it did not skip the step of typing something
+    URL-shaped. UNKNOWN sources should never reach this check at all;
+    they belong in Searched And Not Found, not the pool.
+    """
+    if not isinstance(value, str):
+        return False
+    v = value.strip().lower()
+    for scheme in ("http://", "https://"):
+        if v.startswith(scheme):
+            rest = v[len(scheme):]
+            break
+    else:
+        return False
+    if len(rest) < len("x.co"):  # shortest plausible domain, no scheme
+        return False
+    if any(marker in v for marker in _URL_PLACEHOLDER_MARKERS):
+        return False
+    return True
+
+
 def gate_verify(pool: list, claims: list, mode: str) -> tuple:
     """
     Phase 6 exit gate. Five checks.
@@ -1071,6 +1122,16 @@ def gate_verify(pool: list, claims: list, mode: str) -> tuple:
     if unread:
         failures.append(
             f"REACHABILITY — {len(unread)} source(s) cited but not retrieved")
+
+    # URL SHAPE — structural only, not truth. A source without even a
+    # URL-shaped url field skipped the one step that makes a claim
+    # falsifiable by a reader in seconds. See looks_like_a_real_url().
+    fake_shaped = [s for s in usable if not looks_like_a_real_url(s.get("url"))]
+    if fake_shaped:
+        failures.append(
+            f"URL SHAPE — {len(fake_shaped)} source(s) with no real, "
+            f"resolvable URL (placeholder, bare name, or missing): " +
+            ", ".join(str(s.get("id", "?")) for s in fake_shaped))
 
     # POOL INDEPENDENCE — a whole pool that collapses to one origin is one
     # source, however many entries it has.
