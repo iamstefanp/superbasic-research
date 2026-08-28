@@ -146,18 +146,34 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "H3 runs separately in the fast-checks job on every PR touching harness code." >> "$GITHUB_STEP_SUMMARY"
 
+      # A concurrent run (two workflow_dispatch runs overlapping, or a
+      # scheduled run landing mid-manual-run) can push evidence between
+      # this job's checkout and this step, making a plain `git push`
+      # fail with "fetch first" — found live in this workflow's first
+      # real run. Rebase onto the latest remote and retry a few times
+      # rather than losing this run's evidence entirely.
       - name: Commit evidence
         if: always()
         run: |
           git config user.name "superbasic-research-bot"
           git config user.email "actions@github.com"
           git add tests/redteam/evidence/
-          if ! git diff --cached --quiet; then
-            git commit -m "Automated red-team run — $(date -u +%Y-%m-%dT%H:%M:%SZ) — trigger: ${{ github.event_name }}"
-            git push
-          else
+          if git diff --cached --quiet; then
             echo "No new evidence to commit."
+            exit 0
           fi
+          git commit -m "Automated red-team run — $(date -u +%Y-%m-%dT%H:%M:%SZ) — trigger: ${{ github.event_name }}"
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5) — rebasing onto latest origin/main and retrying."
+            git fetch origin main
+            git rebase origin/main
+            sleep $((attempt * 3))
+          done
+          echo "::warning::Could not push evidence after 5 attempts — evidence exists in this job's local commit but was not published. Not failing the workflow over this alone."
 
       # Only a genuine FAIL (exit_code=1) fails the workflow. An
       # INCONCLUSIVE (exit_code=2, e.g. a provider outage) is surfaced
