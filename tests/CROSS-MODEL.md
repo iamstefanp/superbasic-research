@@ -211,6 +211,62 @@ other two fabricators) behave the same way under the same harness, or
 that this holds up across repeated runs rather than one clean sample.
 Both are the honest next step, not yet done.
 
+## Round 3 (continued) — DeepSeek, Llama 3.3 70B, Gemini 2.5 Pro, GPT-5
+
+Re-ran the harness against the remaining Round 1/1.5 models — the other
+two confirmed fabricators, plus the two "honest-stuck" reasoning models.
+
+| Model | Result under harness |
+|---|---|
+| **DeepSeek** (Round 1 fabricator) | **Clean.** 4 sources in the finished INTEL output, all 4 carrying `retrieved: true` — zero overridden. Given real tools, it stopped inventing. |
+| **Llama 3.3 70B** (Round 1.5 fabricator — the one the tool-access gate alone did not stop) | **Clean.** 2 sources, both `retrieved: true`. Confirms the harness closes exactly the gap the prompt-level gate couldn't: a model willing to fabricate stopped doing so once fabricating a source meant the harness would simply overwrite it. |
+| **Gemini 2.5 Pro** (Round 1 — ran out of budget being honest, did not fabricate) | **Clean.** 4 sources, all `retrieved: true`. Given real tools it no longer needs to spend its budget reasoning about the absence of a tool it now has. |
+| **GPT-5** (Round 1 — ran out of budget being honest, did not fabricate) | **Fixed after a real bug, not a retry.** First harness attempt returned 0 sources — root-caused to the harness's hardcoded `max_tokens=4000` being too tight for GPT-5's heavy internal-reasoning pattern (same "spent its budget reasoning, never reached a final answer" behavior from Round 1, now happening *inside* the harness instead of bare-paste). Made `max_tokens` configurable (`SBR_HARNESS_MAX_TOKENS`, default still 4000) and re-ran at 12,000. Result: 3 sources, all 3 `retrieved: true` — `anthropic.com/news/series-h`, `cnbc.com`'s Feb 2026 coverage, and Anthropic's own Series F announcement. It also correctly logged a real Reuters HTTP 401 as a Failed Retrieval instead of substituting something else — the same disciplined behavior Kimi showed in the first Round 3 entry above. |
+
+**What this confirms:** all four models tested clean under the harness —
+2 previously-confirmed fabricators (DeepSeek, Llama 70B) and 2
+previously-honest-but-stuck models (Gemini, GPT-5) all produced 100%
+genuinely-retrieved sources once given a real tool the runtime controls.
+Combined with Kimi's result above: **5 of 5 models tested under the
+Stage 2 harness so far show zero fabricated sources** — the strongest
+evidence yet that the architectural fix, not a better prompt, is what
+actually closes this gap.
+
+**What this does not confirm:** the GPT-5 result also demonstrates the
+harness itself is not fabrication-proof by construction — it can fail
+in its own mundane way (an under-provisioned token budget) that looks
+identical to "0 sources" whether the cause is refusal, fabrication, or
+plumbing. `max_tokens` exhaustion happened to be the honest explanation
+here, confirmed by fixing it and getting a clean result — but that
+diagnosis took investigation, the same discipline this file has applied
+throughout, not an assumption.
+
+## Round 3 (continued) — Ollama local backend, Mistral
+
+- **Ollama / local backend integration**: `harness/executor.py` now
+  supports `backend="ollama"` (`_call_model` branches on the backend;
+  Ollama's `tool_calls[].function.arguments` arrives as an
+  already-parsed dict, not a JSON string like OpenRouter/OpenAI —
+  confirmed by direct probe against a running local model before writing
+  the integration, not assumed). Running the same local `llama3.2` (3B)
+  that showed the "didn't engage with the method's structure at all"
+  failure in Round 1.5 through the harness surfaced a **different**
+  failure: response-protocol garbling under the tool-calling loop,
+  distinct from fabrication. Not yet resolved — the honest open question
+  is whether this is a capability ceiling of a 3B local model specifically
+  (Round 2's still-pending "larger Ollama model" item exists precisely to
+  separate that from "follows the harness but still fails some other
+  way").
+- **Mistral**: still not reliably testable. OpenRouter's shared pool
+  rate-limits it repeatedly (`429`, "temporarily rate-limited upstream —
+  shared_pool"); a BYOK key was configured in OpenRouter's integration
+  settings, and a single direct call succeeded, but two full multi-phase
+  harness runs both failed partway through the same way. Unresolved —
+  next step is confirming in OpenRouter's own usage/spend dashboard that
+  the BYOK key is actually routing traffic before retrying further,
+  since a single successful call doesn't rule out the shared pool simply
+  recovering on its own.
+
 ## Status
 
 **Round 1 (Kimi, DeepSeek, GPT-5, Gemini): done, disclosed, fix applied
@@ -219,14 +275,17 @@ same-session.**
 done — found the fix insufficient on Llama 70B, found a third failure
 shape on the small local model, found Perplexity needs its own key.**
 **Stages 0/1/3/4: shipped and unit-tested.** **Stage 2: shipped and
-live-verified** — Kimi K2, tested worst-fabricator-first, produced 12/12
-genuinely retrieved sources under the harness, 2 independently
-spot-checked outside it. One real bug found and fixed during the
-harness's own first test (source-list key matching), logged honestly
-rather than hidden. **Not yet verified against DeepSeek or Llama 3.3
-70B** (the other two fabricators) or across repeated runs — next step,
-not yet done.
+live-verified across 5 models — Kimi K2, DeepSeek, Llama 3.3 70B,
+Gemini 2.5 Pro, GPT-5 — every one produced 100% genuinely-retrieved
+sources under the harness, zero fabricated URLs.** Two real bugs found
+and fixed during live testing, not hidden after the fact: (1) the
+enforcement function's source-list key matching (Kimi's first attempt),
+(2) a hardcoded `max_tokens=4000` too tight for GPT-5's heavy-reasoning
+pattern, now configurable via `SBR_HARNESS_MAX_TOKENS`. **Ollama local
+backend is integrated but not yet clean** — the local `llama3.2` (3B)
+shows a distinct protocol-garbling failure under the harness, unresolved.
+**Mistral remains untestable** — repeated OpenRouter rate-limiting, a
+configured BYOK key hasn't reliably fixed multi-phase runs, needs a
+dashboard-level check before further retries.
 **Round 2 (Qwen, Mistral retry, larger Ollama, Perplexity with its own
-key): not yet run** — reasonable to run in parallel with the
-DeepSeek/Llama 70B harness re-verification above, since neither blocks
-the other.
+key): not yet run.**

@@ -29,7 +29,16 @@ import requests
 import search_provider
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+OLLAMA_URL = os.environ.get("SBR_OLLAMA_URL", "http://localhost:11434/api/chat")
 DEFAULT_MODEL = os.environ.get("SBR_HARNESS_MODEL", "openai/gpt-4o")
+DEFAULT_BACKEND = os.environ.get("SBR_HARNESS_BACKEND", "openrouter")
+# 4000 was too tight for a heavy-reasoning model doing real multi-round
+# tool calls — found via testing (GPT-5, 2026-08-28): it spent its
+# budget on internal reasoning about the tool-access constraint and
+# never reached a final answer, producing 0 sources not because it
+# fabricated or refused, but because it ran out of room. Configurable
+# rather than a second hardcoded guess.
+DEFAULT_MAX_TOKENS = int(os.environ.get("SBR_HARNESS_MAX_TOKENS", "4000"))
 
 TOOLS = [
     {
@@ -79,7 +88,38 @@ class HarnessError(Exception):
     failure, which sbr.py's own gates handle."""
 
 
-def _call_model(messages, model=DEFAULT_MODEL):
+def _call_model(messages, model=DEFAULT_MODEL, backend=DEFAULT_BACKEND,
+                 max_tokens=DEFAULT_MAX_TOKENS):
+    """
+    Returns a normalized dict: {"message": {"content": str|None,
+    "tool_calls": [{"id": str, "function": {"name": str,
+    "arguments": dict|str}}]}}.
+
+    Two backends, because they're genuinely different APIs, not just
+    different model names:
+    - openrouter: cloud, any tool-calling-capable model on OpenRouter.
+    - ollama: local, zero cloud dependency, which is exactly the
+      environment where "does this model even get real tools" matters
+      most — most bare-paste users running a local model have no tool
+      access by default, so this is what actually closes that gap for
+      them rather than just testing the cloud case again.
+    """
+    if backend == "ollama":
+        resp = requests.post(
+            OLLAMA_URL,
+            json={"model": model, "messages": messages, "tools": TOOLS,
+                  "stream": False},
+            timeout=180,  # local inference on modest hardware is slow
+        )
+        if resp.status_code != 200:
+            raise HarnessError(f"Ollama call failed: HTTP {resp.status_code} "
+                                f"— {resp.text[:500]}")
+        return resp.json()  # already {"message": {...}} shaped
+
+    if backend != "openrouter":
+        raise HarnessError(f"Unknown backend: {backend!r} "
+                            f"(expected 'openrouter' or 'ollama')")
+
     key = os.environ.get("OPENROUTER_API_KEY")
     if not key:
         raise HarnessError("OPENROUTER_API_KEY is not set.")
@@ -91,14 +131,15 @@ def _call_model(messages, model=DEFAULT_MODEL):
             "model": model,
             "messages": messages,
             "tools": TOOLS,
-            "max_tokens": 4000,
+            "max_tokens": max_tokens,
         },
-        timeout=120,
+        timeout=180,
     )
     if resp.status_code != 200:
         raise HarnessError(f"OpenRouter call failed: HTTP {resp.status_code} "
                             f"— {resp.text[:500]}")
-    return resp.json()
+    data = resp.json()
+    return {"message": data["choices"][0]["message"]}
 
 
 def _execute_tool_call(call, real_urls_seen: set) -> dict:
@@ -108,10 +149,18 @@ def _execute_tool_call(call, real_urls_seen: set) -> dict:
     which is the ground truth the final output gets checked against.
     """
     name = call["function"]["name"]
-    try:
-        args = json.loads(call["function"]["arguments"])
-    except (json.JSONDecodeError, KeyError):
-        args = {}
+    raw_args = call["function"]["arguments"]
+    # OpenRouter/OpenAI send arguments as a JSON string; Ollama sends
+    # them as an already-parsed dict (confirmed by direct probe against
+    # a local model, 2026-08-28) — accept either rather than assuming
+    # one API's convention is universal.
+    if isinstance(raw_args, dict):
+        args = raw_args
+    else:
+        try:
+            args = json.loads(raw_args)
+        except (json.JSONDecodeError, TypeError):
+            args = {}
 
     if name == "web_search":
         query = args.get("query", "")
@@ -135,7 +184,8 @@ def _execute_tool_call(call, real_urls_seen: set) -> dict:
 
 
 def _run_tool_loop(system_prompt: str, user_prompt: str,
-                    model=DEFAULT_MODEL, max_rounds: int = 8):
+                    model=DEFAULT_MODEL, backend=DEFAULT_BACKEND,
+                    max_tokens=DEFAULT_MAX_TOKENS, max_rounds: int = 8):
     """
     Drives the model through as many real tool calls as it wants, up to
     max_rounds, then returns (final_text, real_urls_seen). The loop ends
@@ -149,20 +199,22 @@ def _run_tool_loop(system_prompt: str, user_prompt: str,
     real_urls_seen = set()
 
     for _ in range(max_rounds):
-        response = _call_model(messages, model=model)
-        choice = response["choices"][0]
-        message = choice["message"]
+        response = _call_model(messages, model=model, backend=backend, max_tokens=max_tokens)
+        message = response["message"]
         tool_calls = message.get("tool_calls")
 
         if not tool_calls:
-            return message.get("content", ""), real_urls_seen
+            return message.get("content") or "", real_urls_seen
 
         messages.append(message)
         for call in tool_calls:
             result = _execute_tool_call(call, real_urls_seen)
+            # Ollama's tool_calls don't always carry a stable "id" the
+            # same way OpenAI's do; call.get() rather than call[...] so
+            # a missing id doesn't crash the loop on that backend.
             messages.append({
                 "role": "tool",
-                "tool_call_id": call["id"],
+                "tool_call_id": call.get("id", ""),
                 "content": json.dumps(result),
             })
 
@@ -173,12 +225,21 @@ def _run_tool_loop(system_prompt: str, user_prompt: str,
                     "output as instructed, using only what you've "
                     "actually retrieved above.",
     })
-    response = _call_model(messages, model=model)
-    return response["choices"][0]["message"].get("content", ""), real_urls_seen
+    response = _call_model(messages, model=model, backend=backend, max_tokens=max_tokens)
+    return response["message"].get("content") or "", real_urls_seen
 
 
 def _extract_json_block(text: str) -> dict:
-    """Pull the last fenced ```json block out of the model's response."""
+    """
+    Pull the last fenced ```json block out of the model's response.
+    Defensively tolerant of a non-string `text` — found via testing
+    (Llama 3.3 70B, 2026-08-28) that some providers return an explicit
+    `content: null` rather than omitting the key, which broke the naive
+    `.get("content", "")` default at the call sites; this is the
+    second line of defense in case a None reaches here some other way.
+    """
+    if not isinstance(text, str):
+        return {}
     matches = re.findall(r"```json\s*(\{.*?\})\s*```", text, re.DOTALL)
     if not matches:
         matches = re.findall(r"(\{.*\})", text, re.DOTALL)
@@ -249,10 +310,19 @@ def _enforce_real_urls(outputs: dict, real_urls_seen: set) -> dict:
     return outputs
 
 
-def make_executor(model=DEFAULT_MODEL):
+def make_executor(model=DEFAULT_MODEL, backend=DEFAULT_BACKEND,
+                   max_tokens=DEFAULT_MAX_TOKENS):
     """
     Returns a callable matching sbr.py's agent_executor contract:
         callable(phase_number, run_card, context, previous_card) -> PhaseCard
+
+    `backend="ollama"` runs entirely locally against an Ollama server —
+    zero cloud dependency for the LLM call itself (search still needs
+    Tavily, since local-only search isn't a thing this harness provides).
+    This matters beyond "one more model to test": it's the actual
+    environment a lot of bare-paste users are in by default, where the
+    honest answer to "do I have a search tool" is usually no unless
+    something like this harness gives them one deliberately.
 
     Import sbr.py's PhaseCard lazily to avoid a hard dependency at
     import time for callers who only want search_provider.py.
@@ -276,6 +346,8 @@ def make_executor(model=DEFAULT_MODEL):
             system_prompt,
             f"Execute Phase {phase_number} now.",
             model=model,
+            backend=backend,
+            max_tokens=max_tokens,
         )
 
         outputs = _extract_json_block(text)
