@@ -1,0 +1,14 @@
+{
+  "name": "superbasic-research-docs",
+  "version": "1.0.0",
+  "description": "Documentation site for SuperBasic Research",
+  "scripts": {
+    "dev": "vitepress dev . --port 5174",
+    "build": "vitepress build .",
+    "preview": "vitepress preview ."
+  },
+  "type": "module",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}

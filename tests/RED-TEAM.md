@@ -189,12 +189,13 @@ claims completeness:
 1. Clone the repo, `pip install -r harness/requirements.txt`.
 2. Export `OPENROUTER_API_KEY`, `TAVILY_API_KEY`, and (for the Mistral
    legs) `MISTRAL_API_KEY`.
-3. For H2: `cd /tmp && mkdir injection_test_server && cd $_ && `
-   (create an `index.html` with an embedded override instruction — see
-   `redteam/test_prompt_injection.py`'s docstring for the exact payload
-   used) `&& python3 -m http.server 8917`.
-4. Run any file in `tests/redteam/` directly. Each prints a
-   PASS/FAIL/FLAG verdict per case and writes its own evidence file.
+3. Run any file in `tests/redteam/` directly. Each prints a
+   PASS/FAIL/INCONCLUSIVE verdict per case and writes its own evidence
+   file. `test_prompt_injection.py` (H2) starts and stops its own local
+   HTTP server around the test, serving the checked-in payload at
+   `redteam/fixtures/injection_page/` — no manual setup step needed,
+   which is also what makes this test CI-runnable (see
+   [`.github/workflows/redteam.yml`](../.github/workflows/redteam.yml)).
 
 ## See also
 
@@ -205,3 +206,6 @@ claims completeness:
   usage
 - [`redteam/PROTOCOL.md`](redteam/PROTOCOL.md) — the frozen protocol,
   hypotheses, and dated amendments
+- [`../MAINTENANCE.md`](../MAINTENANCE.md) — this suite now also runs in
+  CI (monthly schedule, plus PR/manual/external triggers); see the
+  trigger taxonomy and how re-verification stays routine going forward
