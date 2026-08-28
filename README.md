@@ -19,7 +19,7 @@ Free to use and adapt.
 
 ## Install
 
-**Claude Code** — copy `sbr.py`, `SKILL.md` and `references/` into a skill
+**Claude Code** — copy `sbr.py`, `SKILL.md` and `standards/` into a skill
 folder:
 
 ```bash
@@ -49,7 +49,7 @@ It has no `main()` because you are `main()`. Every threshold in it is a
 number rather than an adjective, because prose invites interpretation and
 code invites execution.
 
-Open `references/` when the phase you are in tells you to. Do not work
+Open `standards/` when the phase you are in tells you to. Do not work
 from memory of what they contain.
 
 ---
@@ -158,7 +158,7 @@ gate on a bare number.
 
 ---
 
-## References
+## Standards
 
 Open at the phase named. These carry the depth; `sbr.py` carries the
 rules and wires each one to the phase where it applies — none of these
@@ -166,20 +166,20 @@ sit unread.
 
 | File | Open at |
 |---|---|
-| `references/decay-classes.md` | SCOPE — how old is too old for this subject |
-| `references/media-index.md` | PLAN — 98 source types, a Paid/Owned/Earned balance framework by research goal, and a classification decision tree |
-| `references/proxy-labeling.md` | PLAN and VERIFY — identifying, validating and disclosing an indirect measure when the direct one is unavailable |
-| `references/source-personas.md` | INTEL and CHECK — tagging, and testing pool diversity |
-| `references/source-profiles.md` | INTEL — documenting access experience, depth, observed bias and reusability per source, not just its score |
-| `references/source-scoring.md` | VERIFY — the rubric, per dimension |
-| `references/independence-test.md` | VERIFY — before counting anything toward CONFIRMED |
-| `references/anomaly-investigation.md` | INTEL and VERIFY — investigating a finding that contradicts the pattern before rejecting, integrating, or flagging it UNKNOWN |
-| `references/reconciliation-protocol.md` | VERIFY — the four-outcome framework for what to do when two sources contradict each other |
-| `references/assumption-exposure.md` | VERIFY and REPORT — the five categories of hidden assumption that can reverse a finding |
-| `references/triangulation-mapping-guide.md` | VERIFY — mapping claims to supporting sources and scoring real triangulation vs. an echo chamber |
-| `references/hypothesis-evolution-tracking.md` | SYNTHESIZE — the Expected/Observed/Actual framework that makes CONFIRMED/REFUTED/COMPLICATED a real claim, not a formality |
-| `references/report-scoring.md` | REPORT — scoring the finished report itself, separate from scoring its individual sources |
-| `references/report-checklist.md` | REPORT — what to attach and how to name it, so a report is a complete, auditable package |
+| `standards/decay-classes.md` | SCOPE — how old is too old for this subject |
+| `standards/media-index.md` | PLAN — 98 source types, a Paid/Owned/Earned balance framework by research goal, and a classification decision tree |
+| `standards/proxy-labeling.md` | PLAN and VERIFY — identifying, validating and disclosing an indirect measure when the direct one is unavailable |
+| `standards/source-personas.md` | INTEL and CHECK — tagging, and testing pool diversity |
+| `standards/source-profiles.md` | INTEL — documenting access experience, depth, observed bias and reusability per source, not just its score |
+| `standards/source-scoring.md` | VERIFY — the rubric, per dimension |
+| `standards/independence-test.md` | VERIFY — before counting anything toward CONFIRMED |
+| `standards/anomaly-investigation.md` | INTEL and VERIFY — investigating a finding that contradicts the pattern before rejecting, integrating, or flagging it UNKNOWN |
+| `standards/reconciliation-protocol.md` | VERIFY — the four-outcome framework for what to do when two sources contradict each other |
+| `standards/assumption-exposure.md` | VERIFY and REPORT — the five categories of hidden assumption that can reverse a finding |
+| `standards/triangulation-mapping-guide.md` | VERIFY — mapping claims to supporting sources and scoring real triangulation vs. an echo chamber |
+| `standards/hypothesis-evolution-tracking.md` | SYNTHESIZE — the Expected/Observed/Actual framework that makes CONFIRMED/REFUTED/COMPLICATED a real claim, not a formality |
+| `standards/report-scoring.md` | REPORT — scoring the finished report itself, separate from scoring its individual sources |
+| `standards/report-checklist.md` | REPORT — what to attach and how to name it, so a report is a complete, auditable package |
 
 The full standards estate stays complete rather than trimmed to a
 minimal core — raising the bar, not lowering it for convenience, is the

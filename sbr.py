@@ -24,7 +24,7 @@ WHAT THIS IS FOR
 
 TWO LAYERS
     THIS FILE     control     — what you must do. Non-negotiable.
-    references/   competence  — how to do it well. Consulted on demand.
+    standards/   competence  — how to do it well. Consulted on demand.
 
 Locked S270826-2 (2026-08-27). Supersedes all prior statements of the process.
 """
@@ -235,7 +235,7 @@ CANONICAL_SOURCE_TYPES = [
 # ─────────────────────────────────────────────────────────
 # PERSONA TAXONOMY
 # ─────────────────────────────────────────────────────────
-# The twelve personas from references/source-personas.md, named here so
+# The twelve personas from standards/source-personas.md, named here so
 # the gates can check membership rather than trust the label. Full
 # definitions live in the reference file; this list exists only so that
 # "2 distinct personas" (gate_check DIVERSITY) cannot be satisfied by two
@@ -260,69 +260,69 @@ MEDIA_MODES = ["Paid", "Owned", "Earned"]
 # what they contain (Law 3 applies to your own instruments too).
 
 REFERENCES = {
-    "media_index":    ("references/media-index.md",
+    "media_index":    ("standards/media-index.md",
                        "98 source types, each classified Paid / Owned / "
                        "Earned with a default persona, plus a balance "
                        "framework and classification decision tree. Use "
                        "at PLAN to choose source classes deliberately."),
-    "source_personas": ("references/source-personas.md",
+    "source_personas": ("standards/source-personas.md",
                         "The twelve source personas. Use at INTEL to tag "
                         "each source, and at CHECK to test whether the pool "
                         "is actually diverse."),
-    "source_scoring": ("references/source-scoring.md",
+    "source_scoring": ("standards/source-scoring.md",
                        "The rubric per dimension, with worked examples and "
                        "guidance for video, audio and image sources. Use at "
                        "VERIFY."),
-    "source_profiles": ("references/source-profiles.md",
+    "source_profiles": ("standards/source-profiles.md",
                         "How to document access experience, content "
                         "depth, observed bias and reusability per source, "
                         "not just its score. Use at INTEL, as you visit "
                         "each source."),
-    "proxy_labeling": ("references/proxy-labeling.md",
+    "proxy_labeling": ("standards/proxy-labeling.md",
                        "How to identify, validate and disclose a proxy "
                        "measure when the direct one is unavailable. Use "
                        "at PLAN when a claim has no direct data path, "
                        "and at VERIFY to validate correlation strength."),
-    "anomaly_investigation": ("references/anomaly-investigation.md",
+    "anomaly_investigation": ("standards/anomaly-investigation.md",
                               "How to investigate a finding that "
                               "contradicts the emerging pattern before "
                               "rejecting, integrating or flagging it "
                               "UNKNOWN. Use at INTEL when you flag one, "
                               "and at VERIFY to run the investigation."),
-    "reconciliation": ("references/reconciliation-protocol.md",
+    "reconciliation": ("standards/reconciliation-protocol.md",
                        "The four-outcome decision framework for what to "
                        "do when two sources contradict each other. Use "
                        "at VERIFY."),
-    "assumption_exposure": ("references/assumption-exposure.md",
+    "assumption_exposure": ("standards/assumption-exposure.md",
                             "The five categories of hidden assumption "
                             "that can reverse a finding, and how to rate "
                             "and disclose their impact. Use at VERIFY to "
                             "identify them, and at REPORT to disclose "
                             "them."),
-    "triangulation_map": ("references/triangulation-mapping-guide.md",
+    "triangulation_map": ("standards/triangulation-mapping-guide.md",
                           "How to map claims to their supporting sources "
                           "and score whether that support is genuine "
                           "triangulation or an echo chamber. Use at "
                           "VERIFY."),
-    "hypothesis_evolution": ("references/hypothesis-evolution-tracking.md",
+    "hypothesis_evolution": ("standards/hypothesis-evolution-tracking.md",
                              "The Expected/Observed/Actual framework for "
                              "documenting how your hypothesis actually "
                              "moved against the evidence, so CONFIRMED / "
                              "REFUTED / COMPLICATED is a real claim, not "
                              "a formality. Use at SYNTHESIZE."),
-    "report_scoring": ("references/report-scoring.md",
+    "report_scoring": ("standards/report-scoring.md",
                        "How to score the finished report itself — "
                        "diversity, quality, triangulation, recency, "
                        "depth — separate from scoring the individual "
                        "sources in it. Use at REPORT."),
-    "report_checklist": ("references/report-checklist.md",
+    "report_checklist": ("standards/report-checklist.md",
                          "What to attach and how to name it, so a report "
                          "is a complete, auditable package rather than "
                          "just a document. Use at REPORT."),
-    "decay":          ("references/decay-classes.md",
+    "decay":          ("standards/decay-classes.md",
                        "How fast different subjects go stale. Use at SCOPE "
                        "to set the recency gate."),
-    "independence":   ("references/independence-test.md",
+    "independence":   ("standards/independence-test.md",
                        "How to follow a source back to its origin. Use at "
                        "VERIFY. This is the check most often failed and "
                        "least often run."),
@@ -527,7 +527,7 @@ about the subject — that belief is the hypothesis, not the evidence.
 You map the territory before anyone moves.
 
 1. Source classes: which kinds of source can answer this? Open
-   references/media-index.md and choose deliberately across Paid, Owned
+   standards/media-index.md and choose deliberately across Paid, Owned
    and Earned. A pool of only Owned sources is an organisation talking
    about itself.
 2. Out of scope: what will you NOT research? Hard boundaries prevent
@@ -535,7 +535,7 @@ You map the territory before anyone moves.
 3. Language scope.
 4. Recency gate: how old may a source be? This is not one answer — it
    depends on how fast the subject changes. Open
-   references/decay-classes.md.
+   standards/decay-classes.md.
 5. Anticipated tensions: where do you expect sources to disagree? Writing
    this now stops you treating disagreement as an error later.
 
@@ -599,7 +599,7 @@ You go and get it. This is the only phase that searches.
    gap you will not know you have.
 2. For each result record: Source Name · URL · Publication Date ·
    Accessed Date · Persona · Media Mode · Key Facts · Confidence.
-   Tag persona from references/source-personas.md's twelve named personas
+   Tag persona from standards/source-personas.md's twelve named personas
    — exactly one of them, not a paraphrase. Tag media mode as Paid, Owned
    or Earned. A gate at CHECK will reject a tag that isn't one of these.
 3. Capture, do not analyse. Interpretation is Phase 7's job. Analysing
@@ -694,13 +694,13 @@ the exact gap-fill queries. "Do more research" is not gap-fill guidance.
 You are the last line before conclusions. You trust nothing until it
 earns trust.
 
-1. Score every source. Open references/source-scoring.md for the rubric.
+1. Score every source. Open standards/source-scoring.md for the rubric.
    LIGHT: six dimensions, out of 30. HEAVY: eight, out of 40.
    Record every dimension by name, not just the total — the gate below
    checks that the dimensions are all present and actually sum to the
    total you report. A total with no shown working fails.
    Anything below BRONZE leaves the evidence pool.
-2. Test independence properly. Open references/independence-test.md.
+2. Test independence properly. Open standards/independence-test.md.
    Follow each source back toward its origin. Sources sharing an origin
    collapse into one, and you recount after collapsing (Law 4). This is
    the check most often skipped and the one that most often turns a
@@ -914,7 +914,7 @@ def gate_check(pool: list, krq_clusters: list, mode: str) -> tuple:
     if missing:
         failures.append(f"COVERAGE — no findings at all for: {', '.join(missing)}")
 
-    # Persona must be drawn from the twelve in references/source-personas.md
+    # Persona must be drawn from the twelve in standards/source-personas.md
     # (Law 2's spirit applied to tagging: a tag that was never checked
     # against the taxonomy is not a tag, it is a guess wearing one). An
     # invented or off-taxonomy label fails outright rather than silently
@@ -925,7 +925,7 @@ def gate_check(pool: list, krq_clusters: list, mode: str) -> tuple:
     if off_taxonomy:
         failures.append(
             f"PERSONA TAXONOMY — {len(off_taxonomy)} source(s) tagged with "
-            f"a persona not in references/source-personas.md's twelve: " +
+            f"a persona not in standards/source-personas.md's twelve: " +
             "; ".join(sorted({s['persona'] for s in off_taxonomy})))
 
     personas = {s.get("persona") for s in usable
@@ -969,7 +969,7 @@ def gate_verify(pool: list, claims: list, mode: str) -> tuple:
         failures.append("SCORE — not every source carries a score (Law 2)")
 
     # A total with no per-dimension breakdown is a guess wearing a number.
-    # references/source-scoring.md's job docstring already says "record
+    # standards/source-scoring.md's job docstring already says "record
     # every dimension, not just the total" — this is that instruction
     # enforced rather than requested. A source must carry a `dimensions`
     # dict with exactly this mode's dimension names, and the total must
@@ -1010,7 +1010,7 @@ def gate_verify(pool: list, claims: list, mode: str) -> tuple:
             f"{len(origins)} origin; the pool is one source wearing "
             f"{len(usable)} hats (Law 4)")
 
-    # ORIGIN TRACING — references/independence-test.md exists because
+    # ORIGIN TRACING — standards/independence-test.md exists because
     # "count distinct domain names and call that independence" is the
     # single most common way this method gets faked. Domain-counting sets
     # `origin` to the source's own id for everything and calls it done.

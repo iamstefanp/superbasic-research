@@ -9,7 +9,7 @@ This document is unashamedly idealistic. It asks unanswered questions.
 It dwells in impracticality. It refuses to accept that "everyone does it
 this way" is sufficient justification for anything. If you came here
 looking for tactical checklists, you're in the wrong place — though
-you'll find those in `references/`. This is the manifesto. This is the
+you'll find those in `standards/`. This is the manifesto. This is the
 WHY.
 
 These standards were built out of frustration. Frustration with business
@@ -144,7 +144,7 @@ apply as much to a social media post today as to a document written
 centuries ago.
 
 **Source Scoring is historiography for business research.** The
-dimensions in `references/source-scoring.md` operationalize these
+dimensions in `standards/source-scoring.md` operationalize these
 eternal questions into a reproducible evaluation framework.
 
 ### The Law School Method: Interrogate Everything
@@ -173,7 +173,7 @@ action), the Independent Observer (external verification), the Captured
 Expert (aggregated but funded), the Promotional Insider (self-interested
 but informative) — these aren't arbitrary labels. They're recognition
 patterns for source reliability in adversarial evaluation. See
-`references/source-personas.md`.
+`standards/source-personas.md`.
 
 ### The First-Principles Rebellion
 
@@ -204,7 +204,7 @@ This has practical implications:
   perspective.
 - **Time-appropriateness beats recency dogma.** "Recent" means different
   things for regulatory implementation versus cultural values. We match
-  timeframes to subject tempo (see `references/decay-classes.md`), not
+  timeframes to subject tempo (see `standards/decay-classes.md`), not
   arbitrary rules.
 - **Persona diversity prevents blind spots.** Every source type sees
   reality differently. No single perspective suffices.

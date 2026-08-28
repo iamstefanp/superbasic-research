@@ -31,7 +31,7 @@ It has no `main()` because you are `main()`. Every threshold in it is a
 number rather than an adjective, because prose invites interpretation and
 code invites execution.
 
-Open `references/` when the phase you are in tells you to. Do not work
+Open `standards/` when the phase you are in tells you to. Do not work
 from memory of what they contain.
 
 ---
@@ -139,11 +139,11 @@ Open at the phase named. These carry the depth; `sbr.py` carries the rules.
 
 | File | Open at |
 |---|---|
-| `references/decay-classes.md` | SCOPE — how old is too old for this subject |
-| `references/media-index.md` | PLAN — choosing source classes deliberately |
-| `references/source-personas.md` | INTEL and CHECK — tagging, and testing pool diversity |
-| `references/source-scoring.md` | VERIFY — the rubric, per dimension |
-| `references/independence-test.md` | VERIFY — before counting anything toward CONFIRMED |
+| `standards/decay-classes.md` | SCOPE — how old is too old for this subject |
+| `standards/media-index.md` | PLAN — choosing source classes deliberately |
+| `standards/source-personas.md` | INTEL and CHECK — tagging, and testing pool diversity |
+| `standards/source-scoring.md` | VERIFY — the rubric, per dimension |
+| `standards/independence-test.md` | VERIFY — before counting anything toward CONFIRMED |
 
 ---
 
