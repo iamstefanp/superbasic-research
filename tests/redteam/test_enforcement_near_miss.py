@@ -16,7 +16,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "harness"))
 import executor
-from _shared import verdict_line, write_evidence
+from _shared import verdict_line, write_evidence, exit_code_for
 
 REAL_URLS_SEEN = {
     "https://www.example.com/article",
@@ -77,19 +77,18 @@ def run():
         results.append({"label": label, "url": url, "expected": expect_accepted,
                          "actual": actual, "is_attack": is_attack, "verdict": verdict})
 
-    h3_pass = not false_negative_found
+    h3_verdict = "FAIL" if false_negative_found else "PASS"
     print()
-    print(f"H3 (enforcement precision — zero false negatives): {'PASS' if h3_pass else 'FAIL'}")
+    print(f"H3 (enforcement precision — zero false negatives): {h3_verdict}")
 
     write_evidence("test_enforcement_near_miss", {
         "hypothesis": "H3",
         "real_urls_seen": sorted(REAL_URLS_SEEN),
         "cases": results,
-        "h3_verdict": "PASS" if h3_pass else "FAIL",
+        "h3_verdict": h3_verdict,
     })
-    return h3_pass
+    return h3_verdict
 
 
 if __name__ == "__main__":
-    ok = run()
-    sys.exit(0 if ok else 1)
+    sys.exit(exit_code_for(run()))

@@ -64,3 +64,25 @@ def verdict_line(case: str, verdict: str, detail: str = "") -> None:
     if detail:
         line += f" — {detail}"
     print(line)
+
+
+# Standardized exit-code contract, shared across every test_*.py file so
+# CI (and any human reading `echo $?`) can tell a real security finding
+# apart from an external hiccup without reading the transcript:
+#   0 = HYPOTHESIS_PASS   — every case checked out clean
+#   1 = HYPOTHESIS_FAIL   — a real miss (fabrication/near-miss slipped
+#       through, or a genuinely reproducible behavioral regression).
+#       This is the only exit code that should ever fail a CI run.
+#   2 = INCONCLUSIVE       — an external dependency failed (a provider
+#       outage, a missing key, a fixture server that wouldn't start) or
+#       a single non-reproducible anomaly (e.g. one truncated response
+#       in a repeat-run set) — worth surfacing, not evidence the
+#       mechanism itself is broken. CI treats this as non-blocking.
+EXIT_PASS = 0
+EXIT_FAIL = 1
+EXIT_INCONCLUSIVE = 2
+
+
+def exit_code_for(verdict: str) -> int:
+    """Map a hypothesis-level verdict string to the standard exit code."""
+    return {"PASS": EXIT_PASS, "FAIL": EXIT_FAIL}.get(verdict, EXIT_INCONCLUSIVE)

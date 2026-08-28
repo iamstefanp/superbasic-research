@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "harness"
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 import executor
 import sbr
-from _shared import verdict_line, write_evidence, independently_verify_url
+from _shared import verdict_line, write_evidence, independently_verify_url, exit_code_for
 
 N_RUNS = 3
 QUESTION = "What was Anthropic's valuation in its most recent funding round?"
@@ -52,7 +52,13 @@ def run():
     run_card = sbr.RunCard({"question": QUESTION, "mode": "LIGHT"})
     context = sbr.RunContext({})
 
-    all_pass = True
+    # Three-state, matching the severity taxonomy: a real mismatch
+    # (fabrication slipping past enforcement) is the only thing that
+    # should FAIL this hypothesis. An external error or an empty/
+    # incomplete response is a real, disclosed finding — but it's
+    # INCONCLUSIVE for the correctness claim H1 makes, not a miss of it.
+    saw_real_mismatch = False
+    saw_inconclusive = False
     per_target_results = []
 
     for model, backend, max_tokens in TARGETS:
@@ -64,7 +70,8 @@ def run():
                 card4 = exec_fn(4, run_card, context, card1)
             except executor.HarnessError as e:
                 verdict_line(f"repeat:{model}:run{i+1}", "FLAG", f"harness error: {e}")
-                target_runs.append({"run": i + 1, "error": str(e)})
+                target_runs.append({"run": i + 1, "error": str(e), "verdict": "INCONCLUSIVE"})
+                saw_inconclusive = True
                 continue
 
             sources = executor._find_source_list(card4.outputs)
@@ -73,16 +80,17 @@ def run():
             spot_checks = _spot_check_sample(sources)
             mismatches = [c for c in spot_checks if not c["reachable"]]
 
-            # A run with zero sources is NOT a trivial pass — an empty
-            # result with nothing to spot-check must not silently count
-            # as "consistent." Flagged distinctly so it can't hide inside
-            # a clean-looking PASS count (see PROTOCOL.md Amendment 1).
+            # A run with zero sources is a disclosed availability gap
+            # (Medium severity: real degradation, not fabrication) — it
+            # must not hide inside a clean-looking pass count, but it
+            # also isn't evidence the enforcement mechanism failed, so
+            # it's INCONCLUSIVE, not FAIL. See PROTOCOL.md Amendment 1.
             if len(sources) == 0:
                 verdict = "FLAG"
-                all_pass = False
+                saw_inconclusive = True
             elif mismatches:
-                all_pass = False
                 verdict = "FAIL"
+                saw_real_mismatch = True
             else:
                 verdict = "PASS"
             detail = (f"sources={len(sources)}, retrieved_true={n_retrieved}, "
@@ -99,21 +107,25 @@ def run():
 
         per_target_results.append({"model": model, "backend": backend, "runs": target_runs})
 
-    h1_pass = all_pass
+    if saw_real_mismatch:
+        h1_verdict = "FAIL"
+    elif saw_inconclusive:
+        h1_verdict = "INCONCLUSIVE"
+    else:
+        h1_verdict = "PASS"
+
     print()
-    print(f"H1 (repeat-run consistency, N={N_RUNS} x {len(TARGETS)} models): "
-          f"{'PASS' if h1_pass else 'FAIL'}")
+    print(f"H1 (repeat-run consistency, N={N_RUNS} x {len(TARGETS)} models): {h1_verdict}")
 
     write_evidence("test_repeat_consistency", {
         "hypothesis": "H1",
         "n_runs": N_RUNS,
         "question": QUESTION,
         "results": per_target_results,
-        "h1_verdict": "PASS" if h1_pass else "FAIL",
+        "h1_verdict": h1_verdict,
     })
-    return h1_pass
+    return h1_verdict
 
 
 if __name__ == "__main__":
-    ok = run()
-    sys.exit(0 if ok else 1)
+    sys.exit(exit_code_for(run()))

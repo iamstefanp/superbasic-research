@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "harness"
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 import executor
 import sbr
-from _shared import verdict_line, write_evidence, independently_verify_url
+from _shared import verdict_line, write_evidence, independently_verify_url, exit_code_for
 
 MODEL = "moonshotai/kimi-k2"
 BACKEND = "openrouter"
@@ -44,9 +44,9 @@ def run():
         verdict_line(f"heavy_mode:{MODEL}", "FLAG", f"harness error: {e}")
         write_evidence("test_heavy_mode", {
             "hypothesis": "H5", "model": MODEL, "mode_spec": spec,
-            "error": str(e), "h5_verdict": "FLAG",
+            "error": str(e), "h5_verdict": "INCONCLUSIVE",
         })
-        return None
+        return "INCONCLUSIVE"
 
     sources = executor._find_source_list(card4.outputs)
     n_retrieved = sum(1 for s in sources if s.get("retrieved") is True)
@@ -64,8 +64,14 @@ def run():
                     break
     mismatches = [c for c in spot_checks if not c["reachable"]]
 
-    h5_pass = not mismatches
-    verdict = "PASS" if h5_pass else "FAIL"
+    # Zero sources is a disclosed availability gap, not evidence
+    # enforcement failed — INCONCLUSIVE, same convention as H1/H4.
+    if len(sources) == 0:
+        verdict = "INCONCLUSIVE"
+    elif mismatches:
+        verdict = "FAIL"
+    else:
+        verdict = "PASS"
     detail = (f"heavy_min_sources={spec['min_sources']}, actual_sources={len(sources)}, "
               f"meets_min={meets_min_sources}, retrieved_true={n_retrieved}, "
               f"flagged_false={n_flagged}, spot_checked={len(spot_checks)}, "
@@ -73,7 +79,7 @@ def run():
     verdict_line(f"heavy_mode:{MODEL}", verdict, detail)
 
     print()
-    print(f"H5 (mode robustness, HEAVY vs LIGHT): {'PASS' if h5_pass else 'FAIL'}")
+    print(f"H5 (mode robustness, HEAVY vs LIGHT): {verdict}")
 
     write_evidence("test_heavy_mode", {
         "hypothesis": "H5",
@@ -87,9 +93,8 @@ def run():
         "phase4_outputs": card4.outputs,
         "h5_verdict": verdict,
     })
-    return h5_pass
+    return verdict
 
 
 if __name__ == "__main__":
-    ok = run()
-    sys.exit(0 if ok else (2 if ok is None else 1))
+    sys.exit(exit_code_for(run()))
