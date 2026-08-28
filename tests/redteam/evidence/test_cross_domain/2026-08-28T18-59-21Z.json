@@ -1,0 +1,55 @@
+{
+  "hypothesis": "H4",
+  "questions": {
+    "factual_scientific": "What is the current world record time for the men's 100m sprint, and who holds it?",
+    "higher_ambiguity": "What was the primary cause of the 2026 slowdown in venture capital funding for AI startups?"
+  },
+  "results": [
+    {
+      "topic": "factual_scientific",
+      "question": "What is the current world record time for the men's 100m sprint, and who holds it?",
+      "model": "google/gemini-2.5-pro",
+      "n_sources": 0,
+      "n_retrieved_true": 0,
+      "n_flagged_false": 0,
+      "spot_checks": [],
+      "verdict": "FLAG"
+    },
+    {
+      "topic": "factual_scientific",
+      "model": "mistral-large-latest",
+      "error": "Mistral call failed: HTTP 503 \u2014 {\"object\":\"error\",\"message\":\"Service temporarily unavailable due to high load, please retry.\",\"type\":\"internal_server_error\",\"param\":null,\"code\":\"3505\",\"raw_status_code\":503}",
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "topic": "higher_ambiguity",
+      "question": "What was the primary cause of the 2026 slowdown in venture capital funding for AI startups?",
+      "model": "google/gemini-2.5-pro",
+      "n_sources": 4,
+      "n_retrieved_true": 4,
+      "n_flagged_false": 0,
+      "spot_checks": [
+        {
+          "url": "https://journalrecord.com/2026/02/06/ai-startups-global-venture-capital-2025",
+          "reachable": true,
+          "status": 200,
+          "error": null
+        },
+        {
+          "url": "https://www.mintz.com/insights-center/viewpoints/2166/2025-03-10-state-funding-market-ai-companies-2024-2025-outlook",
+          "reachable": true,
+          "status": 200,
+          "error": null
+        }
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "topic": "higher_ambiguity",
+      "model": "mistral-large-latest",
+      "error": "Mistral call failed: HTTP 503 \u2014 {\"object\":\"error\",\"message\":\"Service temporarily unavailable due to high load, please retry.\",\"type\":\"internal_server_error\",\"param\":null,\"code\":\"3505\",\"raw_status_code\":503}",
+      "verdict": "INCONCLUSIVE"
+    }
+  ],
+  "h4_verdict": "INCONCLUSIVE"
+}
