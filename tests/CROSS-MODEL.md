@@ -241,6 +241,35 @@ here, confirmed by fixing it and getting a clean result — but that
 diagnosis took investigation, the same discipline this file has applied
 throughout, not an assumption.
 
+## Round 2 — Qwen
+
+`qwen/qwen3-max` (the current flagship) hit a different kind of block
+before any content generation started: `HTTP 404 — "No endpoints
+available matching your guardrail restrictions and data policy"` — an
+OpenRouter account-level privacy/data-retention setting, not a rate
+limit or a model failure. Rather than change that setting unilaterally,
+switched to `qwen/qwen-2.5-72b-instruct`, an equally large but more
+broadly-served model that avoided the restriction entirely.
+
+**Result: clean.** 10 sources in the finished INTEL output, all 10
+`retrieved: true` — zero overridden. Independently spot-checked one
+(the CNBC Series H coverage, the same URL several other models in this
+file also cited) outside the harness entirely via `curl`: HTTP 200,
+confirming it's a real, resolvable page. That makes **6 of 6 models
+tested under the Stage 2 harness so far — Kimi K2, DeepSeek, Llama 3.3
+70B, Gemini 2.5 Pro, GPT-5, Qwen 2.5 72B — showing zero fabricated
+sources**, across three model families/vendors not previously
+represented in any clean result (Alibaba/Qwen alongside the existing
+OpenAI/Google/Meta/DeepSeek/Moonshot coverage).
+
+One caveat worth logging honestly: `qwen3-max` itself (the model
+originally intended for this test) remains unverified — the 404 was an
+account-policy block, not evidence about the model's behavior either
+way. If the privacy/data-policy setting at
+`openrouter.ai/settings/privacy` is ever relaxed for other reasons,
+`qwen3-max` specifically is still an open data point, not a confirmed
+one by association with 72b-instruct's result.
+
 ## Round 3 (continued) — Ollama local backend, Mistral
 
 - **Ollama / local backend integration**: `harness/executor.py` now
@@ -303,9 +332,10 @@ same-session.**
 done — found the fix insufficient on Llama 70B, found a third failure
 shape on the small local model, found Perplexity needs its own key.**
 **Stages 0/1/3/4: shipped and unit-tested.** **Stage 2: shipped and
-live-verified across 5 models — Kimi K2, DeepSeek, Llama 3.3 70B,
-Gemini 2.5 Pro, GPT-5 — every one produced 100% genuinely-retrieved
-sources under the harness, zero fabricated URLs.** Two real bugs found
+live-verified across 6 models — Kimi K2, DeepSeek, Llama 3.3 70B,
+Gemini 2.5 Pro, GPT-5, Qwen 2.5 72B — every one produced 100%
+genuinely-retrieved sources under the harness, zero fabricated URLs.**
+Two real bugs found
 and fixed during live testing, not hidden after the fact: (1) the
 enforcement function's source-list key matching (Kimi's first attempt),
 (2) a hardcoded `max_tokens=4000` too tight for GPT-5's heavy-reasoning
@@ -324,6 +354,8 @@ isn't attempting the BYOK key at all. This is now an OpenRouter-side
 routing gap, not a key problem; deprioritized in favor of Qwen pending an
 OpenRouter support ticket.
 **Round 2 (Qwen, Mistral retry, larger Ollama, Perplexity with its own
-key): larger-Ollama item done (see above, found a new failure shape
-rather than a clean pass); Qwen in progress; Mistral retry done (see
-above, still blocked); Perplexity still needs its own key.**
+key): Qwen done — clean (`qwen-2.5-72b-instruct`, `qwen3-max` itself
+blocked by an account privacy setting, unrelated to model behavior);
+larger-Ollama item done (see above, found a new failure shape rather
+than a clean pass); Mistral retry done (see above, still blocked, now
+root-caused to OpenRouter's side); Perplexity still needs its own key.**
