@@ -38,22 +38,27 @@ and stamp them CONFIRMED using the method's own scoring apparatus, which
 reads as *more* credible than a plain hallucination, not less. **Do not
 use bare-paste mode for any claim where being wrong carries real cost.**
 The safe way to run this is with a real search tool actually wired into
-the request — a reference harness that does this is in progress (see
-Stage 2 of the fix, `tests/CROSS-MODEL.md`).
+the request — that's what `harness/executor.py` (Stage 2 of the fix) is
+for, and it's shipped: real tool-calling against 6 tested model
+families (Claude, Gemini, ChatGPT, Mistral, DeepSeek, Llama), plus a
+formal red-team evaluation against the enforcement mechanism itself —
+see [`tests/RED-TEAM.md`](tests/RED-TEAM.md).
 
 **The full results, done honestly** — see
-[`tests/CROSS-MODEL.md`](tests/CROSS-MODEL.md), not a marketing claim.
-Short version: the phase structure transfers cleanly to every model
-tested (Claude, Gemini, GPT, Llama, Kimi, DeepSeek). But three of
-them — Kimi K2, DeepSeek, and Llama 3.3 70B — fabricated sources under
-exactly the conditions above. Two independently invented numbers for
-the same fact didn't even agree with each other. A small local model run
-via Ollama failed differently — it didn't engage with the method's
-structure at all and hallucinated plainly instead. `SKILL.md` requires
-an explicit tool-access declaration before Phase 1 can open, which is a
-real, tested improvement — and **confirmed not sufficient on every
-model** (it didn't stop Llama 70B). The fix in progress is staged, not
-finished; this file will keep saying so until it is.
+[`tests/CROSS-MODEL.md`](tests/CROSS-MODEL.md) (the original discovery
+and fix, narrative log) and [`tests/RED-TEAM.md`](tests/RED-TEAM.md)
+(the formal evaluation: pre-registered hypotheses, injection resistance,
+repeat-run consistency, cross-domain generalization — with dated,
+disclosed amendments where things didn't go cleanly, not a marketing
+claim). Short version: bare-paste mode really does fabricate on some
+models (Kimi K2, DeepSeek, Llama 3.3 70B all did, independently
+inventing numbers that didn't even agree with each other) — that risk
+is real and `SKILL.md`'s tool-access gate alone does not fully close it.
+**The harness closes it**: every model tested under real tool-calling,
+including a live-caught fabrication attempt (Mistral), came back with
+zero fabricated sources reaching final output. If you're running this
+programmatically rather than pasting `SKILL.md`, use the harness — see
+`harness/README.md`.
 
 ---
 
@@ -65,7 +70,7 @@ Three parts, matching how you'd actually use them:
 |---|---|---|
 | **Process** | The method itself — what you must do, in order, with gates that can fail | [`sbr.py`](sbr.py), [`SKILL.md`](SKILL.md) — both at the repo root |
 | **Standards** | The depth layer — how to do each step well, opened when the process tells you to | [`standards/`](standards/) — 14 files |
-| **Testing** | Proof the method survives adversarial pressure, including one honest miss | [`tests/`](tests/) — a 10-card battery, graded |
+| **Testing** | Proof the method survives adversarial pressure, including one honest miss | [`tests/`](tests/) — an 11-card battery, graded, plus [`tests/RED-TEAM.md`](tests/RED-TEAM.md), a pre-registered formal evaluation of the fabrication-prevention harness |
 
 Read [`PHILOSOPHY.md`](PHILOSOPHY.md) for why any of this exists.
 

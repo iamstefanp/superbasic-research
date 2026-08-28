@@ -32,11 +32,38 @@ impossible for the one thing that matters most — the URL.
 ```bash
 pip install -r requirements.txt
 
-export OPENROUTER_API_KEY="..."   # already required elsewhere in this repo
 export TAVILY_API_KEY="..."       # get a free key at https://tavily.com
                                    # (1,000 searches/month free tier —
                                    # enough to build and test against)
+
+# Pick a backend — see "Three backends" below:
+export OPENROUTER_API_KEY="..."   # for backend="openrouter" (default)
+export MISTRAL_API_KEY="..."      # for backend="mistral" (direct)
+                                   # Ollama needs no key — see below
 ```
+
+## Three backends
+
+`make_executor(model=..., backend=...)` supports three, because they're
+genuinely different APIs, not just different model names:
+
+- **`backend="openrouter"`** (default) — any tool-calling-capable model
+  on OpenRouter, e.g. `anthropic/claude-sonnet-5`, `openai/gpt-5`,
+  `google/gemini-2.5-pro`, `deepseek/deepseek-chat`,
+  `moonshotai/kimi-k2`, `qwen/qwen-2.5-72b-instruct`.
+- **`backend="mistral"`** — calls `api.mistral.ai` directly. Added
+  because OpenRouter's BYOK routing for Mistral was found to be broken
+  (a verified-working key, confirmed active on both Mistral's own API
+  and OpenRouter's own key-test, still never got attempted by
+  OpenRouter — every call fell through to the rate-limited shared
+  pool). Going direct sidesteps that entirely. Model: e.g.
+  `mistral-large-latest`.
+- **`backend="ollama"`** — local, zero cloud dependency, pointed at
+  `http://localhost:11434` by default (override with `SBR_OLLAMA_URL`).
+  This is the environment where "does this model even get real tools"
+  matters most — most bare-paste users running a local model have no
+  tool access by default. Model: whatever's pulled locally, e.g.
+  `llama3.1:8b`.
 
 ## Use it
 
@@ -51,7 +78,12 @@ ctx  = sbr.RunContext({"destination": None})
 
 result = sbr.run_sbr(
     card, ctx,
-    agent_executor=executor.make_executor(),   # this file, not a bare LLM call
+    agent_executor=executor.make_executor(
+        model="anthropic/claude-sonnet-5", backend="openrouter",
+        max_tokens=12000,   # see "max_tokens matters" below — the
+                            # 4,000 default is too tight for several
+                            # tested models
+    ),
     writer=lambda dest, name, content: {"id": name, "url": None},
 )
 
@@ -59,10 +91,18 @@ print(result.status)     # COMPLETE | PARTIAL | STOPPED
 print(result.documents)
 ```
 
-Swap `executor.make_executor(model="anthropic/claude-3.5-sonnet")` or
-any other tool-calling-capable model on OpenRouter — the harness code
-doesn't change, only which model is doing the reasoning around the real
-tool results.
+### `max_tokens` matters — the default will silently fail on some models
+
+The harness's default (`SBR_HARNESS_MAX_TOKENS`, 4,000) is tuned for
+lighter models. Heavy-reasoning models (GPT-5, Claude) were found to
+spend most or all of that budget on internal reasoning before producing
+a final answer — the result is **0 sources, which looks like the model
+refused or the harness is broken, when the real cause is running out of
+room.** Confirmed and fixed by raising the budget (GPT-5 needed ~12k,
+Claude needed ~20k for a full Phase 1→4 chain) — see
+[`../tests/CROSS-MODEL.md`](../tests/CROSS-MODEL.md) for the exact
+diagnosis. If you get 0 sources from a capable model, raise
+`max_tokens` before assuming anything else is wrong.
 
 ## What this does NOT fix
 
@@ -82,11 +122,17 @@ tool results.
 
 ## Status
 
-**Code complete, unit-tested on the pure logic (JSON extraction, URL
-enforcement) with mock data. Not yet live-tested end-to-end against a
-real model + real Tavily key** — that's the next step once a
-`TAVILY_API_KEY` is available. The honest test, per the staged plan: run
-the exact Round 1/1.5 prompts (Kimi, DeepSeek, Llama 3.3 70B — the three
-models that fabricated) through this harness and confirm every source
-in the resulting Report has a URL that traces to a real, logged tool
-call. Log the result as Round 3 in `../tests/CROSS-MODEL.md`.
+**Live-verified and formally red-teamed, not just unit-tested.** Every
+one of the six required model families (Claude, Gemini, Mistral,
+ChatGPT/GPT-5, DeepSeek, Llama) has run through this harness for real
+and come back with 100% of cited sources genuinely retrieved — including
+one live-caught fabrication attempt (Mistral: 5 of 7 invented sources,
+all correctly overridden by the harness, not the model's own honesty).
+Full results: [`../tests/CROSS-MODEL.md`](../tests/CROSS-MODEL.md).
+
+Beyond "does it work once": a formal, pre-registered evaluation —
+repeat-run consistency, adversarial prompt injection, enforcement
+attacks against fabricated/near-miss URLs, cross-domain generalization,
+HEAVY-mode robustness — is documented in
+[`../tests/RED-TEAM.md`](../tests/RED-TEAM.md), with every claim backed
+by a raw, committed evidence file under `../tests/redteam/evidence/`.
