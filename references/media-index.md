@@ -184,6 +184,88 @@ Op-ed · Medium post · YouTube long-form · YouTube Short · YouTube Live · Ti
 | 97 | Commissioned research study | Consultancy/agency, subject's site | Study or white paper funded by an interested party | Paid | Analytical/Promotional | Captured Expert |
 | 98 | Paid expert network call | Expert network platform | Hourly call with a screened industry practitioner | Paid | Informational (fee-driven) | Anonymous Insider |
 
+## Balance framework — ideal mix by research goal
+
+No single research goal needs equal amounts of all three modes. The
+ideal mix depends on what you're trying to learn. Use this at PLAN to
+set a target distribution, and at CHECK to audit against it.
+
+| Research Goal | Ideal Mix | Why This Mix |
+|---|---|---|
+| **Competitive Intelligence** | 60% Earned, 30% Owned, 10% Paid | Third-party validation most credible; owned shows competitor strategy; paid often surface-level hype |
+| **Market Trends & Growth** | 50% Earned, 40% Owned, 10% Paid | Job postings/earnings calls (owned) show intent; journalist analysis (earned) validates patterns; paid claims often exaggerate |
+| **Culture & Brand Perception** | 70% Earned, 20% Owned, 10% Paid | Community voice (earned) defines actual perception; owned shows aspiration; paid is noise |
+| **Regulatory/Compliance** | 85% Earned, 15% Owned, 0% Paid | Official filings (owned) are legal records; regulator statements (earned) are authoritative; paid content irrelevant |
+| **Financial Analysis** | 50% Owned, 40% Earned, 10% Paid | Statutory filings (owned) are legal; analyst reports (earned) provide interpretation; paid materials rarely contain financial substance |
+| **Product/Service Quality** | 75% Earned, 15% Owned, 10% Paid | User reviews (earned) + independent testing reveal real quality; company claims (owned) aspirational; paid reviews suspicious |
+| **Reputation/Crisis** | 80% Earned, 10% Owned, 10% Paid | News coverage (earned) defines public perception; response (owned) shows authenticity; paid reputation repair often fails |
+| **Hiring/Talent Attraction** | 50% Owned, 40% Earned, 10% Paid | Job postings (owned) are real opportunities; employer-review sites (earned) show employee experience; paid recruiting ads less honest |
+
+**Anti-patterns to avoid:**
+
+- ❌ **All-owned research** — exclusively reading company websites and
+  press releases tells you only what the subject wants you to believe.
+  ✓ Minimum 40% earned, as a rule of thumb, unless the research goal
+  above says otherwise.
+- ❌ **Assuming more = better** — finding 20 paid ads doesn't increase
+  source diversity; it's the same message 20 times.
+  ✓ Count unique *perspectives*, not instances.
+- ❌ **Paid=Earned confusion** — sponsored content that looks organic is
+  still paid. ✓ Always check for a disclosed financial relationship.
+- ❌ **Earned=Objective** — a critical independent review is still
+  filtered through that reviewer's perspective. ✓ Earned means
+  independent, not unbiased.
+
+## Classification decision tree
+
+When you encounter a source, use this tree to classify media mode:
+
+```
+QUESTION: Who paid for this information to reach me?
+
+├─ The subject (or an agent acting on their behalf) paid
+│  └─→ PAID MEDIA
+│      Examples: ads, sponsored content, paid placement, influencer deal,
+│                commissioned research, paid search, trade show booth
+│
+├─ The subject created this directly (no third party, no intermediary)
+│  └─→ OWNED MEDIA
+│      Examples: company website, social media post, press release,
+│                job posting, annual report, blog, email
+│
+└─ A third party created this independently (no direct payment to them)
+   └─→ EARNED MEDIA
+       Examples: news article, blog post, customer review, social
+                 discussion, academic research, analyst report, podcast
+                 interview
+```
+
+### Edge cases & how to classify
+
+| Source | Classification | Why |
+|--------|---|---|
+| Influencer post with a `#sponsored` tag | PAID | Even though it looks organic, the influencer was paid. |
+| Press release distributed via a paid wire service | OWNED | The release is owned (the subject created it); distribution is paid. Classify by creation, not distribution. |
+| An executive's personal social post | OWNED | They control their own account, even when promoting the company. |
+| Podcast interview: journalist interviewing an executive | EARNED | The journalist conducted it and chose the framing. Even though it features the executive's voice, the journalist is the creator. |
+| Customer testimonial published on the company's own site | **Ambiguous:** owned creation (company published) + customer voice (authentic). Treat as **Owned** (the company controls presentation), but note the customer voice is authentic. |
+| News article quoting a press release | EARNED | The article is journalist-created (earned); the *quote itself* is subject-created (owned). Classify the article as earned. |
+| An analyst report commissioned by the subject it covers | PAID | Even if it looks independent, the payment makes it paid media. |
+| Independent creator review, no sponsorship disclosed | EARNED | Creator controls content, no payment. |
+| A retargeting ad from the subject | PAID | The subject paid for the placement and targeting. |
+| A community-edited reference page | EARNED | Community-edited, no subject payment involved. |
+| Job posting on a third-party job board | OWNED (source) + PAID (distribution, sometimes) | The posting itself is owned (the subject created it); posting to the board is sometimes paid, sometimes free. Classify by creation = Owned. |
+| Third-party research shared as a free report | EARNED | Researcher created it independently, no payment from the subject. |
+
+**Grey area: distinguishing Paid from Earned.** The most common
+challenge is identifying paid placements that masquerade as earned
+media. Checks: does it carry `#sponsored`/`#ad`/"paid partnership"? Is
+there a "brought to you by" disclaimer? Is a financial relationship
+disclosed anywhere? Does the outlet's advertising rate apply? Does the
+source have zero track record of criticism (suspicious) or a history of
+independent criticism (more likely genuinely earned — harder to fake
+independence over time)?
+
 ---
 
 **Count:** 98 source types — Article 15 · Video 15 · Audio 8 · Social Post 12 · Regulatory 12 · Corporate 10 · Academic 5 · Direct 5 · Live 5 · Paid 11.

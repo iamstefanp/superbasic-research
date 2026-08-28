@@ -261,9 +261,10 @@ MEDIA_MODES = ["Paid", "Owned", "Earned"]
 
 REFERENCES = {
     "media_index":    ("references/media-index.md",
-                       "87 source types, each classified Paid / Owned / "
-                       "Earned with a default persona. Use at PLAN to "
-                       "choose source classes deliberately."),
+                       "98 source types, each classified Paid / Owned / "
+                       "Earned with a default persona, plus a balance "
+                       "framework and classification decision tree. Use "
+                       "at PLAN to choose source classes deliberately."),
     "source_personas": ("references/source-personas.md",
                         "The twelve source personas. Use at INTEL to tag "
                         "each source, and at CHECK to test whether the pool "
@@ -272,6 +273,52 @@ REFERENCES = {
                        "The rubric per dimension, with worked examples and "
                        "guidance for video, audio and image sources. Use at "
                        "VERIFY."),
+    "source_profiles": ("references/source-profiles.md",
+                        "How to document access experience, content "
+                        "depth, observed bias and reusability per source, "
+                        "not just its score. Use at INTEL, as you visit "
+                        "each source."),
+    "proxy_labeling": ("references/proxy-labeling.md",
+                       "How to identify, validate and disclose a proxy "
+                       "measure when the direct one is unavailable. Use "
+                       "at PLAN when a claim has no direct data path, "
+                       "and at VERIFY to validate correlation strength."),
+    "anomaly_investigation": ("references/anomaly-investigation.md",
+                              "How to investigate a finding that "
+                              "contradicts the emerging pattern before "
+                              "rejecting, integrating or flagging it "
+                              "UNKNOWN. Use at INTEL when you flag one, "
+                              "and at VERIFY to run the investigation."),
+    "reconciliation": ("references/reconciliation-protocol.md",
+                       "The four-outcome decision framework for what to "
+                       "do when two sources contradict each other. Use "
+                       "at VERIFY."),
+    "assumption_exposure": ("references/assumption-exposure.md",
+                            "The five categories of hidden assumption "
+                            "that can reverse a finding, and how to rate "
+                            "and disclose their impact. Use at VERIFY to "
+                            "identify them, and at REPORT to disclose "
+                            "them."),
+    "triangulation_map": ("references/triangulation-mapping-guide.md",
+                          "How to map claims to their supporting sources "
+                          "and score whether that support is genuine "
+                          "triangulation or an echo chamber. Use at "
+                          "VERIFY."),
+    "hypothesis_evolution": ("references/hypothesis-evolution-tracking.md",
+                             "The Expected/Observed/Actual framework for "
+                             "documenting how your hypothesis actually "
+                             "moved against the evidence, so CONFIRMED / "
+                             "REFUTED / COMPLICATED is a real claim, not "
+                             "a formality. Use at SYNTHESIZE."),
+    "report_scoring": ("references/report-scoring.md",
+                       "How to score the finished report itself — "
+                       "diversity, quality, triangulation, recency, "
+                       "depth — separate from scoring the individual "
+                       "sources in it. Use at REPORT."),
+    "report_checklist": ("references/report-checklist.md",
+                         "What to attach and how to name it, so a report "
+                         "is a complete, auditable package rather than "
+                         "just a document. Use at REPORT."),
     "decay":          ("references/decay-classes.md",
                        "How fast different subjects go stale. Use at SCOPE "
                        "to set the recency gate."),
@@ -1130,9 +1177,13 @@ def build_phase_prompt(phase_number: int, run_card: RunCard,
 def _references_for_phase(phase_number: int) -> list:
     mapping = {
         2: ["decay"],
-        3: ["media_index"],
-        4: ["source_personas"],
-        6: ["source_scoring", "independence"],
+        3: ["media_index", "proxy_labeling"],
+        4: ["source_personas", "source_profiles", "anomaly_investigation"],
+        6: ["source_scoring", "independence", "anomaly_investigation",
+            "reconciliation", "assumption_exposure", "proxy_labeling",
+            "triangulation_map"],
+        7: ["hypothesis_evolution"],
+        8: ["assumption_exposure", "report_scoring", "report_checklist"],
     }
     return [REFERENCES[k] for k in mapping.get(phase_number, [])]
 
