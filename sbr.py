@@ -31,6 +31,75 @@ Locked S270826-2 (2026-08-27). Supersedes all prior statements of the process.
 
 
 # ─────────────────────────────────────────────────────────
+# TOOL ACCESS — checked before anything else, including the Laws
+# ─────────────────────────────────────────────────────────
+# Found by testing this file's prose form (SKILL.md) against models with
+# no search tool wired into the request: two of six — pasted in as a bare
+# system prompt, no callable tool — produced full, formatted reports
+# anyway. Fake dates, fake outlets, fake quotes, run through this
+# method's own scoring apparatus and stamped CONFIRMED. Two independent
+# fabrications of the same fact didn't even agree with each other.
+#
+# This is a categorically different failure from anything the Laws
+# address. The Laws are behavioural constraints on a capable agent —
+# they assume you CAN search and are choosing whether to cite honestly.
+# A model with no search tool at all cannot search, full stop, no matter
+# what it types. Narrating a search under those conditions is not a
+# lapse in discipline; it is impossible to be anything other than
+# fiction. So this is checked first, before Phase 1, as a precondition
+# for whether the method can run at all — not as Law 11, which would
+# imply it is one more thing to remember to do well.
+#
+# THE CHECK, before writing a single word of BRIEF:
+#   Do you have a callable search or fetch tool in THIS environment,
+#   right now — not "can models like me generally browse," but does
+#   THIS request give you one you can actually invoke?
+#
+#   NO  → Say so, plainly, in one sentence. Do not open Phase 1. Do not
+#         produce a Report. Do not narrate what a search would probably
+#         find. The honest output of a tool-less request is "I cannot
+#         run SuperBasic Research here — I have no search tool," and
+#         nothing else.
+#   YES → Proceed to Phase 1. When you search, cite the literal tool or
+#         function you called, not a paraphrase of what you imagine
+#         it returned.
+#
+# There is no code in this file that can verify a self-declared "YES" is
+# true — that verification only exists where the runtime itself inserts
+# tool results the model cannot author (see README, "Running it for
+# real"). What this file CAN enforce mechanically: a declared "NO" must
+# actually stop the run. gate_tool_access() below is that enforcement.
+
+TOOL_ACCESS_CHECK = (
+    "Before anything else — before the Laws, before Phase 1 — answer "
+    "one question honestly: do you have a callable search or fetch tool "
+    "in this environment, right now? Not whether models like you "
+    "generally can browse — whether THIS request gave you one. If no: "
+    "say so in one sentence and stop. Do not open BRIEF. Do not narrate "
+    "a search you cannot perform — that produces a report that LOOKS "
+    "sourced and is actually invented, which is worse than refusing."
+)
+
+
+def gate_tool_access(tool_access: bool) -> tuple:
+    """
+    The precondition gate, run before Phase 1 exists.
+
+    `tool_access` is the agent's own declaration. This function cannot
+    verify the declaration is honest — only that anything other than an
+    explicit `True` actually halts the run rather than being quietly
+    treated as a pass. An omitted field is not a pass; it is the same
+    failure to declare that this gate exists to catch.
+    """
+    if tool_access is True:
+        return (True, [])
+    reason = ("not declared at all" if tool_access is None
+              else f"declared {tool_access!r}")
+    return (False, [f"TOOL ACCESS — {reason}; run stops here. "
+                     "No Report, no claims, nothing to verify."])
+
+
+# ─────────────────────────────────────────────────────────
 # THE LAWS
 # ─────────────────────────────────────────────────────────
 # Read before anything executes. Every law is a prohibition, so every
@@ -465,7 +534,7 @@ class RunResult:
         self.destination       = None
         self.documents         = {}
         self.report_url        = None
-        self.status            = "PENDING"    # PENDING|COMPLETE|PARTIAL
+        self.status            = "PENDING"    # PENDING|COMPLETE|PARTIAL|STOPPED
         self.failed_gate       = None         # set when status == PARTIAL
         self.confidence_scores = {}
 
@@ -508,6 +577,8 @@ Do not search yet. Do not reason from what you already believe you know
 about the subject — that belief is the hypothesis, not the evidence.
         """,
         "doc_schema": [
+            "Tool Access — true or false, answered honestly, before "
+            "anything else in this document",
             "Research Question — one sentence, answerable",
             "Working Hypothesis — specific enough to be wrong",
             "KRQ Cluster 1 — name + 2–3 sub-questions",
@@ -1095,8 +1166,10 @@ def build_phase_prompt(phase_number: int, run_card: RunCard,
         f"# SuperBasic™ Research — Phase {phase_number}: {phase['name']}",
         f"You are the {phase['role']}.",
         "",
-        "## The Laws",
     ]
+    if phase_number == 1:
+        lines += ["## Before Anything Else", f"  {TOOL_ACCESS_CHECK}", ""]
+    lines += ["## The Laws"]
     for group in LAWS.values():
         lines += [f"  {law}" for law in group]
 
@@ -1231,6 +1304,17 @@ def run_sbr(run_card: RunCard, context: RunContext,
             context=context,
             previous_card=previous_card,
         )
+
+        # Precondition gate, checked once, before Phase 1 counts as having
+        # happened at all (see TOOL_ACCESS_CHECK above). A declared "no
+        # tools" halts the run here — no buffer entry, no document, no
+        # claims left standing to be mistaken for researched ones.
+        if phase == 1:
+            passed, failures = gate_tool_access(card.outputs.get("tool_access"))
+            if not passed:
+                result.status      = "STOPPED"
+                result.failed_gate = failures[0]
+                return result
 
         buffer.append((phase, config["name"], card))
         result.confidence_scores[config["name"]] = card.confidence

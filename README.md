@@ -17,6 +17,48 @@ Free to use and adapt.
 
 ---
 
+## What to do right now
+
+1. Open [`SKILL.md`](SKILL.md) and copy everything in it.
+2. Paste it into the start of a conversation with an AI chat **that has
+   live search or browsing turned on.**
+3. Ask your actual research question. The method should first ask
+   whether it actually has a usable search tool right now, then what
+   mode to run in (LIGHT or HEAVY).
+
+That's it. No install, no account, no code. `sbr.py` is the same method
+written as code instead of prose, for tools that read files directly —
+see **Install** below if that's your setup.
+
+**Cross-model testing, done honestly** — see
+[`tests/CROSS-MODEL.md`](tests/CROSS-MODEL.md) for the real results,
+not a marketing claim. Short version: the phase structure transferred
+cleanly to every model tested (Claude, Gemini, GPT, Kimi, DeepSeek). But
+without a real search tool wired in, two of them — Kimi K2 and
+DeepSeek — fabricated entire source tables (fake outlets, fake dates,
+fake quotes) and stamped them CONFIRMED anyway, using the method's own
+scoring apparatus to make the fabrication look more credible, not less.
+Their two invented numbers for the same fact didn't even agree with each
+other. This is why "Before anything else" in `SKILL.md` now requires an
+explicit tool-access declaration before Phase 1 can open at all — closing
+the gap the test found, not hiding it.
+
+---
+
+## What's in this repo
+
+Three parts, matching how you'd actually use them:
+
+| | What | Where |
+|---|---|---|
+| **Process** | The method itself — what you must do, in order, with gates that can fail | [`sbr.py`](sbr.py), [`SKILL.md`](SKILL.md) — both at the repo root |
+| **Standards** | The depth layer — how to do each step well, opened when the process tells you to | [`standards/`](standards/) — 14 files |
+| **Testing** | Proof the method survives adversarial pressure, including one honest miss | [`tests/`](tests/) — a 10-card battery, graded |
+
+Read [`PHILOSOPHY.md`](PHILOSOPHY.md) for why any of this exists.
+
+---
+
 ## Install
 
 **Claude Code** — copy `sbr.py`, `SKILL.md` and `standards/` into a skill
@@ -30,9 +72,9 @@ cp -r superbasic-research ~/.claude/skills/superbasic-research
 **claude.ai** — zip the repo (minus `tests/`, which is proof material, not
 part of the method) and upload it under Settings → Customize → Skills.
 
-**Anywhere else** — `SKILL.md` is plain markdown. Paste it into any chat
-that accepts a system prompt, then point it at `sbr.py`. It works in
-ChatGPT, Gemini, Cursor, and anything reading the Agent Skills standard.
+**Anywhere else** — see **What to do right now**, above. `SKILL.md` reads
+as plain markdown in ChatGPT, Gemini, Cursor, and anything reading the
+Agent Skills standard.
 
 **As part of an agent** — the [SuperBasic™ Agents](https://github.com/iamstefanp/superbasic-agents)
 Researcher carries this method as its runtime. Use that repo if you want

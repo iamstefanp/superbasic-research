@@ -36,6 +36,27 @@ from memory of what they contain.
 
 ---
 
+## Before anything else
+
+Answer one question honestly, before you open BRIEF: **do you have a
+callable search or fetch tool in this environment, right now?** Not
+whether models like you generally can browse — whether *this*
+conversation actually gave you one.
+
+**No** → say so, in one sentence, and stop. Do not open Phase 1. Do not
+narrate a search you cannot perform. This has been tested: pasted as a
+bare system prompt with no tool wired in, some models still produced a
+full, formatted report anyway — fake dates, fake outlets, fake quotes,
+scored and stamped CONFIRMED by the method's own apparatus. Two
+independent fabrications of the same fact didn't even agree with each
+other. A report that looks sourced and is actually invented is worse
+than refusing.
+
+**Yes** → proceed. When you search, cite the literal tool or function
+you called, not a paraphrase of what you imagine it returned.
+
+---
+
 ## The Laws
 
 Read these before anything else. Each is a prohibition, so each can be
@@ -133,21 +154,33 @@ differs between running inside an organisation and running on a laptop.
 
 ---
 
-## References
+## Standards
 
 Open at the phase named. These carry the depth; `sbr.py` carries the rules.
 
 | File | Open at |
 |---|---|
 | `standards/decay-classes.md` | SCOPE — how old is too old for this subject |
-| `standards/media-index.md` | PLAN — choosing source classes deliberately |
+| `standards/media-index.md` | PLAN — 98 source types, a Paid/Owned/Earned balance framework, a classification decision tree |
+| `standards/proxy-labeling.md` | PLAN and VERIFY — identifying, validating and disclosing an indirect measure |
 | `standards/source-personas.md` | INTEL and CHECK — tagging, and testing pool diversity |
+| `standards/source-profiles.md` | INTEL — access experience, depth, observed bias, reusability per source |
 | `standards/source-scoring.md` | VERIFY — the rubric, per dimension |
 | `standards/independence-test.md` | VERIFY — before counting anything toward CONFIRMED |
+| `standards/anomaly-investigation.md` | INTEL and VERIFY — investigating a finding that contradicts the pattern |
+| `standards/reconciliation-protocol.md` | VERIFY — what to do when two sources contradict each other |
+| `standards/assumption-exposure.md` | VERIFY and REPORT — hidden assumptions that can reverse a finding |
+| `standards/triangulation-mapping-guide.md` | VERIFY — real triangulation vs. an echo chamber |
+| `standards/hypothesis-evolution-tracking.md` | SYNTHESIZE — Expected/Observed/Actual, so CONFIRMED/REFUTED/COMPLICATED is a real claim |
+| `standards/report-scoring.md` | REPORT — scoring the finished report itself |
+| `standards/report-checklist.md` | REPORT — what to attach, so a report is a complete package |
 
 ---
 
 ## When a run fails
+
+If you have no tool access, the run is **STOPPED** before it starts —
+see "Before anything else," above.
 
 If a gate fails and the loops are exhausted, the run is **PARTIAL**. Say
 so at the top of the Report and name the gate that failed.
