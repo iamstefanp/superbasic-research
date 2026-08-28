@@ -1,5 +1,11 @@
 # SuperBasic™ Research
 
+![License: CC BY-SA 4.0](https://img.shields.io/badge/license-CC%20BY--SA%204.0-blue)
+![Red-teamed](https://img.shields.io/badge/red--teamed-4%2F5%20hypotheses%20confirmed-brightgreen)
+![Models verified](https://img.shields.io/badge/models%20verified-6%20families-brightgreen)
+![Telemetry](https://img.shields.io/badge/telemetry-none-lightgrey)
+![No CLA](https://img.shields.io/badge/CLA-none%20required-lightgrey)
+
 **A program you run instead of improvising.**
 
 Left alone, a model asked to research something searches a little, decides
@@ -15,50 +21,126 @@ way to report finding nothing.
 Built by [Stefan Petcov](https://runwayservices.net) / Runway Services.
 Free to use and adapt.
 
+[**Read this before you rely on it for anything that matters →**](#one-thing-to-know-before-you-use-this)
+
 ---
 
-## What to do right now
+## Quick start
 
-1. Open [`SKILL.md`](SKILL.md) and copy everything in it.
-2. Paste it into the start of a conversation with an AI chat **that has
-   live search or browsing turned on.**
-3. Ask your actual research question. The method should first ask
-   whether it actually has a usable search tool right now, then what
-   mode to run in (LIGHT or HEAVY).
+**1. No install — paste it.**
 
-That's it. No install, no account, no code. `sbr.py` is the same method
-written as code instead of prose, for tools that read files directly —
-see **Install** below if that's your setup.
+Open [`SKILL.md`](SKILL.md), copy everything in it, paste it into the
+start of a conversation with an AI chat **that has live search or
+browsing turned on.** Ask your actual research question. The method
+should first ask whether it actually has a usable search tool right
+now, then what mode to run in (LIGHT or HEAVY).
 
-**Read this before you rely on step 2 for anything that matters.**
-Cross-model testing found that pasting `SKILL.md` with no real search
-tool wired into the request — bare-paste mode — makes some models
-fabricate entire source tables (fake outlets, fake dates, fake quotes)
-and stamp them CONFIRMED using the method's own scoring apparatus, which
-reads as *more* credible than a plain hallucination, not less. **Do not
-use bare-paste mode for any claim where being wrong carries real cost.**
-The safe way to run this is with a real search tool actually wired into
-the request — that's what `harness/executor.py` (Stage 2 of the fix) is
-for, and it's shipped: real tool-calling against 6 tested model
-families (Claude, Gemini, ChatGPT, Mistral, DeepSeek, Llama), plus a
-formal red-team evaluation against the enforcement mechanism itself —
-see [`tests/RED-TEAM.md`](tests/RED-TEAM.md).
+**2. Programmatic — real tool-calling, verified against 6 model families.**
 
-**The full results, done honestly** — see
-[`tests/CROSS-MODEL.md`](tests/CROSS-MODEL.md) (the original discovery
-and fix, narrative log) and [`tests/RED-TEAM.md`](tests/RED-TEAM.md)
-(the formal evaluation: pre-registered hypotheses, injection resistance,
-repeat-run consistency, cross-domain generalization — with dated,
-disclosed amendments where things didn't go cleanly, not a marketing
-claim). Short version: bare-paste mode really does fabricate on some
-models (Kimi K2, DeepSeek, Llama 3.3 70B all did, independently
-inventing numbers that didn't even agree with each other) — that risk
-is real and `SKILL.md`'s tool-access gate alone does not fully close it.
-**The harness closes it**: every model tested under real tool-calling,
-including a live-caught fabrication attempt (Mistral), came back with
-zero fabricated sources reaching final output. If you're running this
-programmatically rather than pasting `SKILL.md`, use the harness — see
-`harness/README.md`.
+```python
+import sys
+sys.path.insert(0, "harness")
+import executor, sbr
+
+card = sbr.RunCard({"question": "your real research question", "mode": "LIGHT"})
+ctx  = sbr.RunContext({"destination": None})
+
+result = sbr.run_sbr(
+    card, ctx,
+    agent_executor=executor.make_executor(
+        model="anthropic/claude-sonnet-5", backend="openrouter", max_tokens=12000,
+    ),
+    writer=lambda dest, name, content: {"id": name, "url": None},
+)
+print(result.status)      # COMPLETE | PARTIAL | STOPPED
+```
+
+**3. HEAVY mode — more sources, stricter thresholds, same code.**
+
+```python
+card = sbr.RunCard({"question": "your real research question", "mode": "HEAVY"})
+# everything else identical — mode is the only thing that changes
+```
+
+See [Connect your setup](#connect-your-setup) below for Claude Code,
+claude.ai, ChatGPT, Gemini, and running it as part of an agent.
+
+---
+
+## One thing to know before you use this
+
+**Bare-paste mode (step 1 above) can fabricate.** Cross-model testing
+found that pasting `SKILL.md` with no real search tool wired into the
+request makes some models fabricate entire source tables — fake
+outlets, fake dates, fake quotes — and stamp them CONFIRMED using the
+method's own scoring apparatus, which reads as *more* credible than a
+plain hallucination, not less. **Do not use bare-paste mode for any
+claim where being wrong carries real cost.**
+
+**Step 2 (the harness) closes this.** Real tool-calling, verified
+across 6 model families — Claude, Gemini, ChatGPT, Mistral, DeepSeek,
+Llama — with a formal, pre-registered red-team evaluation against the
+enforcement mechanism itself, including one **live-caught fabrication
+attempt** that the harness correctly overrode.
+
+| | Where to look |
+|---|---|
+| The original discovery, the fix, and the full narrative log | [`tests/CROSS-MODEL.md`](tests/CROSS-MODEL.md) |
+| The formal evaluation — pre-registered hypotheses, injection resistance, repeat-run consistency, cross-domain generalization, raw evidence for every claim | [`tests/RED-TEAM.md`](tests/RED-TEAM.md) |
+| The harness itself — setup, backends, usage | [`harness/README.md`](harness/README.md) |
+
+---
+
+## Model support
+
+Verified live against the harness, not assumed from a vendor name.
+
+| Model family | Status | Notes |
+|---|---|---|
+| Claude | ✅ Verified | Also the runtime for the 11-card method battery ([`tests/`](tests/)) |
+| Gemini | ✅ Verified | Clean across both LIGHT-mode and cross-domain tests |
+| ChatGPT (GPT-5) | ✅ Verified | Needed a raised `max_tokens` budget — see [`harness/README.md`](harness/README.md#max_tokens-matters--the-default-will-silently-fail-on-some-models) |
+| Mistral | ✅ Verified | Direct backend (bypasses a since-found OpenRouter routing bug); **the one model caught actually fabricating** — 5 of 7 invented sources, all correctly overridden |
+| DeepSeek | ✅ Verified | Clean, and correctly resisted a live prompt-injection attack |
+| Llama (3.3 70B, cloud) | ✅ Verified | The model a prompt-level gate alone did *not* stop — the harness did |
+| Llama (local, via Ollama) | ⚠️ Partial | Real tool-calling confirmed working at the API level; two distinct failure shapes found at 3B and 8B — see [`tests/CROSS-MODEL.md`](tests/CROSS-MODEL.md) |
+| Qwen | ✅ Verified (extra) | Not on the required list, tested anyway — clean |
+
+Full methodology and raw evidence: [`tests/RED-TEAM.md`](tests/RED-TEAM.md).
+
+---
+
+## For security teams
+
+- **No telemetry, no phone-home.** Nothing in this repo reports usage,
+  errors, or content anywhere. The only network calls the harness makes
+  are to the search/LLM providers you configure yourself.
+- **Nothing is trusted by default.** The harness's core mechanism exists
+  because "the model says it searched" is not evidence — every cited
+  source is cross-checked against what a real tool call actually
+  returned, in code, not by asking the model to self-report.
+- **API keys stay local.** `OPENROUTER_API_KEY` / `TAVILY_API_KEY` /
+  `MISTRAL_API_KEY` are read from your own environment; nothing in this
+  repo transmits them anywhere but the provider they're for.
+- **Adversarially tested, with the design frozen before results
+  existed.** [`tests/redteam/PROTOCOL.md`](tests/redteam/PROTOCOL.md)'s
+  git history proves the test hypotheses predate the outcomes — not
+  fitted to what happened after the fact.
+- **Zero disk writes required to run the method itself** — `sbr.py`
+  returns documents in memory; where they're written (Drive, local
+  disk, nowhere) is entirely up to the `writer` callback you supply.
+
+## For legal & procurement
+
+- **CC BY-SA 4.0** — use it, adapt it, build on it. Share adaptations
+  under the same terms. Full text: [LICENSE](LICENSE).
+- **No CLA.** Nothing to sign to use, fork, or modify this.
+- **SuperBasic™ is a trademark; the method is not.** The process itself
+  is open under the license above — the name has separate, narrower
+  terms. See [TRADEMARK.md](TRADEMARK.md).
+- **Not source-available, not open-core.** There is no paid tier, no
+  feature gated behind a license key, and no separate "enterprise"
+  version of this repo.
 
 ---
 
@@ -76,7 +158,7 @@ Read [`PHILOSOPHY.md`](PHILOSOPHY.md) for why any of this exists.
 
 ---
 
-## Install
+## Connect your setup
 
 **Claude Code** — copy `sbr.py`, `SKILL.md` and `standards/` into a skill
 folder:
@@ -89,9 +171,16 @@ cp -r superbasic-research ~/.claude/skills/superbasic-research
 **claude.ai** — zip the repo (minus `tests/`, which is proof material, not
 part of the method) and upload it under Settings → Customize → Skills.
 
-**Anywhere else** — see **What to do right now**, above. `SKILL.md` reads
-as plain markdown in ChatGPT, Gemini, Cursor, and anything reading the
-Agent Skills standard.
+**ChatGPT, Gemini, Cursor, anywhere else** — `SKILL.md` reads as plain
+markdown and works as a system/first message anywhere. See
+[**One thing to know before you use this**](#one-thing-to-know-before-you-use-this)
+first — bare-paste mode's limitations apply everywhere it's pasted, not
+just in one client.
+
+**Programmatically, with real tool-calling** — use `harness/executor.py`
+directly (see [Quick start](#quick-start) above and
+[`harness/README.md`](harness/README.md) for backend options: OpenRouter,
+Mistral direct, or local Ollama).
 
 **As part of an agent** — the [SuperBasic™ Agents](https://github.com/iamstefanp/superbasic-agents)
 Researcher carries this method as its runtime. Use that repo if you want
@@ -248,24 +337,35 @@ point. See [PHILOSOPHY.md](PHILOSOPHY.md) for why.
 
 ## Tested, not just claimed
 
-`tests/` is a 10-card adversarial test battery, each card built around a
-specific trap the method has to survive — sources that look independent
-but share one origin, catalogs that genuinely disagree, entities that
-collide under one name, evidence that's paywalled rather than absent, the
-same brief run three times blind to check whether the method reproduces
-or just guesses well once. Every run is graded by an adversarial judge
-with no memory of writing the method, who independently re-fetches
-sources rather than trusting the transcript.
+Two layers of testing, both published in full, both including the honest
+miss rather than only the wins:
 
-The honest result is in there too: most cards passed, one (the
-replication card) did not clear its own bar, and that failure is logged
-in the open rather than smoothed over — see `tests/RESULTS.md` and
-`tests/FINDINGS-MEMO.md`. A method that only publishes its wins isn't
-verifiable; this one publishes the miss as well.
+**The method itself** — [`tests/`](tests/) is an 11-card adversarial
+battery, each card built around a specific trap the method has to
+survive: sources that look independent but share one origin, catalogs
+that genuinely disagree, entities that collide under one name, evidence
+that's paywalled rather than absent, the same brief run three times blind
+to check whether the method reproduces or just guesses well once. Every
+run is graded by an adversarial judge with no memory of writing the
+method, who independently re-fetches sources rather than trusting the
+transcript. Most cards passed; one (the replication card) did not clear
+its own bar, and that failure is logged in the open — see
+`tests/RESULTS.md` and `tests/FINDINGS-MEMO.md`.
+
+**The fabrication-prevention harness** — [`tests/RED-TEAM.md`](tests/RED-TEAM.md)
+is a formal, pre-registered evaluation of `harness/executor.py`: 5
+falsifiable hypotheses frozen in [`tests/redteam/PROTOCOL.md`](tests/redteam/PROTOCOL.md)
+*before* any test ran, adversarial prompt injection, direct attacks on
+the URL-enforcement mechanism, repeat-run consistency, cross-domain
+generalization — with raw, committed evidence for every claim under
+`tests/redteam/evidence/`. 4 of 5 hypotheses fully confirmed; the fifth's
+Mistral leg is an honest INCONCLUSIVE from a real API outage
+mid-evaluation, disclosed as a dated protocol amendment, not smoothed
+over.
 
 ```
 tests/
-  BATTERY.md            the 10 cards
+  BATTERY.md            the 11 cards (method battery)
   RUBRIC.md              gates, scoring, verdict format
   RESULTS.md              the registry, one row per graded run
   CORRECTIONS.md           the change log — including a reopened finding
@@ -273,7 +373,34 @@ tests/
   capability-ledger.md      known-blocked domains, demonstrated per-run
   answer-keys/V-T2.md       the one frozen ground-truth key
   check_run.py, structural_precheck.py   mechanical checkers
+
+  CROSS-MODEL.md         the fabrication discovery + fix, narrative log
+  RED-TEAM.md            the formal harness evaluation (published report)
+  redteam/                the evaluation itself
+    PROTOCOL.md            frozen hypotheses, severity taxonomy, evidence policy
+    test_*.py               5 standalone, re-runnable test files
+    evidence/                raw, committed evidence per run
 ```
+
+---
+
+## Development
+
+The red-team suite in `tests/redteam/` is designed to be re-run, extended,
+and pointed at new models — each test file runs standalone:
+
+```bash
+python3 tests/redteam/test_enforcement_near_miss.py   # no API needed, seconds
+python3 tests/redteam/test_prompt_injection.py
+python3 tests/redteam/test_repeat_consistency.py
+python3 tests/redteam/test_cross_domain.py
+python3 tests/redteam/test_heavy_mode.py
+```
+
+Adding a new model to the model-support table above means adding it to
+the relevant test file's target list and re-running — the harness code
+itself doesn't change. See [`tests/redteam/PROTOCOL.md`](tests/redteam/PROTOCOL.md)
+for the hypotheses each test is checking and the evidence format expected.
 
 ---
 
