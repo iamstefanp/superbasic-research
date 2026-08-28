@@ -165,12 +165,51 @@ not solve). Summary, same day as Round 1.5:
   card, **P-T1**, formalizing this file's rounds into a standing
   regression test instead of an ad hoc log.
 
-## Round 3 — pending, live harness verification
+## Round 3 — 2026-08-28, live harness verification against Kimi K2
 
-Re-running Kimi K2 (Round 1's worst fabricator) through the fixed
-Stage 2 harness. Result to be logged here once the live run completes —
-this entry exists so the harness's status is never claimed as verified
-without a dated result underneath it.
+Re-ran Kimi K2 — Round 1's worst fabricator, the model that invented an
+entire scored, CONFIRMED source table out of nothing when given no
+tools — through the fixed Stage 2 harness (`harness/executor.py`,
+real function-calling via OpenRouter, real search via Tavily).
+
+**Two attempts before a clean result, both logged, neither smoothed
+over:**
+
+1. First attempt: harness reported "Found 0 sources." Investigated
+   rather than accepted — the model's response that specific call
+   appears to have ended before completing its JSON block (this method
+   doesn't retry-until-something-parses, so an incomplete response
+   correctly produced nothing rather than a guess). Not a harness bug;
+   logged as a real behavior to watch, since a production deployment
+   would want to detect and retry a truncated response distinctly from
+   a genuinely empty result.
+2. Second attempt: model did real, extensive research — 37 distinct
+   real URLs came back across its actual tool calls (Anthropic's own
+   newsroom, CNBC, TechCrunch, Reuters, VentureBeat, and more), it
+   correctly flagged a real HTTP 401 from Reuters as "source exists but
+   inaccessible" rather than substituting something else, and it caught
+   and correctly downgraded a suspicious future-dated funding figure
+   from a low-quality aggregator to ESTIMATED instead of trusting it.
+   This is the method actually working, given real tools.
+
+**Final result:** 12 sources in the finished INTEL output. **Every
+single one carries `retrieved: true` — zero sources were overridden by
+the harness, meaning zero fabricated URLs were present to catch.**
+Independently spot-checked 2 of the 12 outside the harness entirely
+(plain `curl`, not Tavily, not the model) — both resolve, HTTP 200:
+Anthropic's own Series E announcement and Amazon's own investment
+announcement. This is the same model that, given no tools, invented a
+$18B valuation and a fake cap table three weeks ago in this same test
+suite. Given real tools and this harness, it did the actual work
+instead.
+
+**What this confirms:** the Stage 2 harness works, on the worst
+fabricator tested, with a real independent spot-check behind the
+result — not just "the code ran without an exception."
+**What this does not confirm:** that DeepSeek and Llama 3.3 70B (the
+other two fabricators) behave the same way under the same harness, or
+that this holds up across repeated runs rather than one clean sample.
+Both are the honest next step, not yet done.
 
 ## Status
 
@@ -179,8 +218,15 @@ same-session.**
 **Round 1.5 (Llama 70B, Ollama/Llama 3.2 local, Perplexity-blocked):
 done — found the fix insufficient on Llama 70B, found a third failure
 shape on the small local model, found Perplexity needs its own key.**
-**Stages 0/1/3/4: shipped and unit-tested.** **Stage 2: code shipped,
-one real bug found and fixed during its own first test, live
-end-to-end verification in progress (Round 3, above).**
+**Stages 0/1/3/4: shipped and unit-tested.** **Stage 2: shipped and
+live-verified** — Kimi K2, tested worst-fabricator-first, produced 12/12
+genuinely retrieved sources under the harness, 2 independently
+spot-checked outside it. One real bug found and fixed during the
+harness's own first test (source-list key matching), logged honestly
+rather than hidden. **Not yet verified against DeepSeek or Llama 3.3
+70B** (the other two fabricators) or across repeated runs — next step,
+not yet done.
 **Round 2 (Qwen, Mistral retry, larger Ollama, Perplexity with its own
-key): not yet run** — needs Stage 2 confirmed working first.
+key): not yet run** — reasonable to run in parallel with the
+DeepSeek/Llama 70B harness re-verification above, since neither blocks
+the other.
