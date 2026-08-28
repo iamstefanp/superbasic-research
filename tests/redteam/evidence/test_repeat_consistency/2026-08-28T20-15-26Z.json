@@ -1,0 +1,1014 @@
+{
+  "hypothesis": "H1",
+  "n_runs": 3,
+  "question": "What was Anthropic's valuation in its most recent funding round?",
+  "results": [
+    {
+      "model": "moonshotai/kimi-k2",
+      "backend": "openrouter",
+      "runs": [
+        {
+          "run": 1,
+          "n_sources": 9,
+          "n_retrieved_true": 9,
+          "n_flagged_false": 0,
+          "spot_checks": [
+            {
+              "url": "https://www.cnbc.com/2026/02/12/anthropic-closes-30-billion-funding-round-at-380-billion-valuation.html",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            },
+            {
+              "url": "https://fortune.com/2026/06/01/anthropic-confidentially-files-ipo-965-billion-valuation",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            }
+          ],
+          "verdict": "PASS",
+          "phase4_raw_outputs": {
+            "Intel Items": [
+              {
+                "source": "Anthropic Official Announcement (Series H)",
+                "query_used": "Anthropic May 2026 funding round $965 billion valuation official announcement",
+                "URL": "https://x.com/AnthropicAI/status/2060061347522433422",
+                "published": "May 28, 2026",
+                "accessed": "2025-01-09",
+                "persona": "Primary Source (Company)",
+                "media_mode": "Owned",
+                "facts": "Anthropic raised $65 billion in Series H funding at a $965 billion post-money valuation. Round led by Altimeter Capital, Dragoneer, Greenoaks, and Sequoia Capital.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "TechCrunch",
+                "query_used": "Anthropic Series H funding $65 billion $965 billion valuation May 2026",
+                "URL": "https://techcrunch.com/2026/05/28/anthropic-raises-65-billion-nears-1t-valuation-ahead-of-ipo",
+                "published": "May 28, 2026",
+                "accessed": "2025-01-09",
+                "persona": "Trade Press",
+                "media_mode": "Earned",
+                "facts": "Anthropic raised $65 billion in Series H funding at a $965 billion post-money valuation. Round co-led by Altimeter Capital, Dragoneer, Greenoaks, Sequoia Capital, Capital Group, Coatue, D1 Capital Partners. Strategic infrastructure partners including Samsung, SK Hynix, and Micron joined. $15 billion of the round comprised previously committed investments from hyperscalers including $5 billion from Amazon.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Fortune",
+                "query_used": "Anthropic May 2026 funding round $965 billion valuation official announcement",
+                "URL": "https://fortune.com/2026/06/01/anthropic-confidentially-files-ipo-965-billion-valuation",
+                "published": "June 1, 2026",
+                "accessed": "2025-01-09",
+                "persona": "Financial Press",
+                "media_mode": "Earned",
+                "facts": "Anthropic raised $65 billion in funding at a $965 billion valuation. Company confidentially filed for IPO on June 1, 2026. Valuation eclipses OpenAI's $852 billion valuation for the first time.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "NBC News",
+                "query_used": "Anthropic Series H funding $65 billion $965 billion valuation May 2026",
+                "URL": "https://www.nbcnews.com/tech/tech-news/anthropic-secures-965-billion-valuation-raising-65-billion-rcna347390",
+                "published": "May 28, 2026",
+                "accessed": "2025-01-09",
+                "persona": "Mainstream Media",
+                "media_mode": "Earned",
+                "facts": "Anthropic raised $65 billion at a post-money valuation of $965 billion in Series H funding. Run-rate revenue crossed $47 billion earlier in May 2026. Round led by Altimeter Capital, Dragoneer, Greenoaks and Sequoia Capital, with Coatue and ICONIQ as co-leads. Round includes $15 billion of previously committed investments from hyperscalers including $5 billion from Amazon.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Anthropic Official Announcement (Series G)",
+                "query_used": "Anthropic most recent funding round valuation 2024",
+                "URL": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation",
+                "published": "September 2, 2025",
+                "accessed": "2025-01-09",
+                "persona": "Primary Source (Company)",
+                "media_mode": "Owned",
+                "facts": "Anthropic raised $13 billion in Series F funding at $183 billion post-money valuation. Led by ICONIQ, co-led by Fidelity Management & Research Company and Lightspeed Venture Partners. Run-rate revenue reached over $5 billion by August 2025.",
+                "confidence": "CONFIRMED - SUPERSEDED",
+                "retrieved": true
+              },
+              {
+                "source": "CNBC",
+                "query_used": "Anthropic most recent funding round valuation 2024",
+                "URL": "https://www.cnbc.com/2026/02/12/anthropic-closes-30-billion-funding-round-at-380-billion-valuation.html",
+                "published": "February 12, 2026",
+                "accessed": "2025-01-09",
+                "persona": "Financial Press",
+                "media_mode": "Earned",
+                "facts": "Anthropic closed $30 billion Series G funding round at $380 billion post-money valuation. Round led by Coatue and Singapore sovereign wealth fund GIC. Annualized revenue climbed to $14 billion. Second-biggest private financing round on record for tech.",
+                "confidence": "CONFIRMED - SUPERSEDED",
+                "retrieved": true
+              },
+              {
+                "source": "Crunchbase News",
+                "query_used": "Anthropic Series G funding $380 billion valuation February 2026",
+                "URL": "https://news.crunchbase.com/ai/anthropic-raises-30b-second-largest-deal-all-time",
+                "published": "February 12, 2026",
+                "accessed": "2025-01-09",
+                "persona": "Trade Press",
+                "media_mode": "Earned",
+                "facts": "Anthropic raised $30 billion in Series G funding at $380 billion post-money valuation. Largest venture funding deal of 2026 at that time, second-largest of all time. Led by GIC and Coatue, co-led by D.E. Shaw & Co. Ventures, Dragoneer, Founders Fund, Iconiq Capital and MGX.",
+                "confidence": "CONFIRMED - SUPERSEDED",
+                "retrieved": true
+              },
+              {
+                "source": "TechCrunch",
+                "query_used": "Anthropic Series G funding $380 billion valuation February 2026",
+                "URL": "https://techcrunch.com/2026/02/12/anthropic-raises-another-30-billion-in-series-g-with-a-new-value-of-380-billion",
+                "published": "February 12, 2026",
+                "accessed": "2025-01-09",
+                "persona": "Trade Press",
+                "media_mode": "Earned",
+                "facts": "Anthropic concluded $30 billion Series G fundraising round at $380 billion valuation. Round led by GIC and Coatue, with D. E. Shaw Ventures, Founders Fund, and MGX co-leading.",
+                "confidence": "CONFIRMED - SUPERSEDED",
+                "retrieved": true
+              },
+              {
+                "source": "Anthropic Official Announcement (Series E)",
+                "query_used": "Anthropic Series C funding valuation Amazon investment",
+                "URL": "https://www.anthropic.com/news/anthropic-raises-series-e-at-usd61-5b-post-money-valuation",
+                "published": "March 3, 2025",
+                "accessed": "2025-01-09",
+                "persona": "Primary Source (Company)",
+                "media_mode": "Owned",
+                "facts": "Anthropic raised $3.5 billion at $61.5 billion post-money valuation in Series E. Led by Lightspeed Venture Partners. Preceded the Series F ($183B) and Series G ($380B) rounds.",
+                "confidence": "CONFIRMED - SUPERSEDED",
+                "retrieved": true
+              }
+            ],
+            "Failed Retrievals": [
+              {
+                "source": "Reuters",
+                "URL": "https://www.reuters.com/technology/anthropic-valued-380-billion-latest-funding-round-2026-02-12",
+                "reason": "HTTP 401 - Access denied/paywall"
+              },
+              {
+                "source": "Reuters",
+                "URL": "https://www.reuters.com/business/anthropic-raises-65-billion-now-valued-965-billion-2026-05-28",
+                "reason": "HTTP 401 - Access denied/paywall"
+              }
+            ],
+            "Anomalies": [
+              {
+                "description": "Search results contained references to dates in 2026 (February, May, June), which appear to be speculative/future-dated content or hypothetical scenarios. The current date context suggests these may be forward-looking projections or fictional scenarios rather than actual historical events. However, multiple independent sources (TechCrunch, Fortune, NBC News, company Twitter/X) corroborate the Series H funding details with consistent figures ($65B raised, $965B valuation, May 28, 2026 date).",
+                "investigation": "Cross-referenced multiple sources - TechCrunch, Fortune, NBC News, and Anthropic's official X/Twitter account all report the same Series H funding details. The consistency across genuinely independent sources suggests these are actual reported events, not speculative content. The dates may reflect the source publication context."
+              }
+            ],
+            "KRQ Coverage": {
+              "Cluster 1 - Funding Round Identification": {
+                "status": "COVERED",
+                "canonical_document": "Anthropic official X/Twitter announcement and TechCrunch reporting",
+                "notes": "Most recent confirmed funding round is Series H, announced May 28, 2026. Prior rounds include Series G (February 12, 2026), Series F (September 2, 2025), and Series E (March 3, 2025)."
+              },
+              "Cluster 2 - Valuation Determination": {
+                "status": "COVERED",
+                "canonical_document": "Anthropic official X/Twitter announcement",
+                "notes": "Series H valuation: $965 billion post-money. Series G: $380 billion post-money. Series F: $183 billion post-money. Series E: $61.5 billion post-money. All valuations explicitly stated as post-money in official sources."
+              },
+              "Cluster 3 - Context and Verification": {
+                "status": "COVERED",
+                "canonical_document": "Multiple independent news sources",
+                "notes": "Valuation progression: $61.5B (Mar 2025) \u2192 $183B (Sep 2025) \u2192 $380B (Feb 2026) \u2192 $965B (May 2026). Series H valuation surpasses OpenAI's $852B valuation. Company filed for confidential IPO June 1, 2026."
+              }
+            },
+            "Searched And Not Found": [
+              {
+                "query": "Anthropic Series I funding 2026",
+                "result": "No evidence of Series I funding round. Series H (May 2026) appears to be the most recent confirmed funding round."
+              },
+              {
+                "query": "Anthropic funding round after May 2026 Series H latest valuation",
+                "result": "No funding rounds confirmed after Series H (May 28, 2026). Company filed for IPO June 1, 2026, suggesting Series H may be the final private funding round."
+              }
+            ]
+          }
+        },
+        {
+          "run": 2,
+          "n_sources": 7,
+          "n_retrieved_true": 7,
+          "n_flagged_false": 0,
+          "spot_checks": [
+            {
+              "url": "https://forgeglobal.com/anthropic_ipo",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            },
+            {
+              "url": "https://www.cnbc.com/2026/02/12/anthropic-closes-30-billion-funding-round-at-380-billion-valuation.html",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            }
+          ],
+          "verdict": "PASS",
+          "phase4_raw_outputs": {
+            "Intel Items": [
+              {
+                "source": "CNBC",
+                "query_used": "Anthropic most recent funding round valuation 2024",
+                "URL": "https://www.cnbc.com/2026/02/12/anthropic-closes-30-billion-funding-round-at-380-billion-valuation.html",
+                "published": "February 12, 2026",
+                "accessed": "2025-01-10",
+                "persona": "Financial Journalist",
+                "media_mode": "Earned",
+                "facts": "Anthropic announced on Thursday (February 12, 2026) the close of a $30 billion funding round at a $380 billion post-money valuation. The round was led by Coatue and Singapore sovereign wealth fund GIC. D. E. Shaw Ventures, Dragoneer, Founders Fund, ICONIQ and MGX also participated. The round includes a portion of previously announced investments from Microsoft and Nvidia. This is the second-biggest private financing round on record for tech, following OpenAI's raise of over $40 billion in 2025.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Anthropic (Company Announcement)",
+                "query_used": "Anthropic Series C funding valuation",
+                "URL": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation",
+                "published": "September 2, 2025",
+                "accessed": "2025-01-10",
+                "persona": "Corporate Spokesperson",
+                "media_mode": "Owned",
+                "facts": "Anthropic completed a Series F fundraising of $13 billion led by ICONIQ. This financing valued Anthropic at $183 billion post-money. Along with ICONIQ, the round was co-led by Fidelity Management & Research Company and Lightspeed Venture Partners.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Anthropic (Company Announcement)",
+                "query_used": "Anthropic Series C funding valuation",
+                "URL": "https://www.anthropic.com/news/anthropic-raises-series-e-at-usd61-5b-post-money-valuation",
+                "published": "March 3, 2025",
+                "accessed": "2025-01-10",
+                "persona": "Corporate Spokesperson",
+                "media_mode": "Owned",
+                "facts": "Anthropic raised $3.5 billion at a $61.5 billion post-money valuation. The round was led by Lightspeed Venture Partners, with participation from Bessemer Venture Partners, Cisco Investments, D1 Capital Partners, Fidelity Management & Research Company, General Catalyst, Jane Street, Menlo Ventures and Salesforce Ventures.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Crunchbase News",
+                "query_used": "Anthropic Series G funding round $30 billion $380 billion valuation February 2026",
+                "URL": "https://news.crunchbase.com/ai/anthropic-raises-30b-second-largest-deal-all-time",
+                "published": "February 12, 2026",
+                "accessed": "2025-01-10",
+                "persona": "Financial Journalist",
+                "media_mode": "Earned",
+                "facts": "Anthropic announced it raised $30 billion in a massive Series G funding round that values it at $380 billion post-money. The financing marks the largest venture funding deal of 2026 so far and the second-largest of all time, following only rival OpenAI's $40 billion funding in 2025. GIC and Coatue led the raise, which was also co-led by D.E. Shaw & Co. Ventures, Dragoneer Investment Group, Founders Fund, Iconiq Capital and MGX.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "TechCrunch",
+                "query_used": "Anthropic Series G funding round $30 billion $380 billion valuation February 2026",
+                "URL": "https://techcrunch.com/2026/02/12/anthropic-raises-another-30-billion-in-series-g-with-a-new-value-of-380-billion",
+                "published": "February 12, 2026",
+                "accessed": "2025-01-10",
+                "persona": "Technology Journalist",
+                "media_mode": "Earned",
+                "facts": "Anthropic concluded a $30 billion Series G fundraising round on Thursday. The company's new value is $380 billion \u2014 a huge jump from its previous Series F valuation of $183 billion. The round was led by Singaporean wealth fund GIC and investment management firm Coatue, with D. E. Shaw Ventures, Peter Thiel's Founders Fund, and Abu Dhabi's MGX co-leading.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Forge Global",
+                "query_used": "\"Anthropic\" \"funding round\" valuation 2025 2026 chronological timeline",
+                "URL": "https://forgeglobal.com/anthropic_ipo",
+                "published": "Data current as of 2026",
+                "accessed": "2025-01-10",
+                "persona": "Market Data Provider",
+                "media_mode": "Paid",
+                "facts": "Anthropic's Series G-1 funding round closed on 02/12/2026 with $15.16B raised at a $380B post-money valuation. The table also shows a Series H-1 on 05/28/2026 with $41.29B raised at $965B valuation. Total funding is listed as $118.15B.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Pinggy Blog",
+                "query_used": "\"Anthropic\" \"funding round\" valuation 2025 2026 chronological timeline",
+                "URL": "https://pinggy.io/blog/openai_anthropic_funding_history",
+                "published": "2026",
+                "accessed": "2025-01-10",
+                "persona": "Industry Analyst",
+                "media_mode": "Earned",
+                "facts": "On May 28, 2026, Anthropic closed a $65 billion Series H at a $965 billion post-money valuation. Timeline shows: March 2025 - $3.5B Series E at $61.5B valuation; September 2025 - $13B Series F at $183B valuation; February 2026 - $30B Series G at $380B valuation.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              }
+            ],
+            "Failed Retrievals": [
+              {
+                "URL": "https://www.reuters.com/technology/anthropic-valued-380-billion-latest-funding-round-2026-02-12",
+                "attempted": "2025-01-10",
+                "issue": "HTTP 401 - Access denied/paywall"
+              }
+            ],
+            "Anomalies": [
+              {
+                "description": "Multiple sources report conflicting timelines for 'most recent' funding round. Primary sources (CNBC, TechCrunch, Crunchbase, Anthropic company announcements) all confirm Series G on February 12, 2026 at $380B valuation as the most recent announced round. However, Forge Global and Pinggy Blog report a subsequent Series H in May 2026 at $965B valuation. This creates ambiguity about what constitutes 'most recent' - the most recently announced (Series G, Feb 2026) or the chronologically latest reported (Series H, May 2026). The Series H is reported by secondary sources (Forge, Pinggy) but not confirmed by primary company announcements or major financial news outlets in retrieved results.",
+                "investigation": "Series G (Feb 12, 2026, $380B) is CONFIRMED by multiple independent sources (CNBC, TechCrunch, Crunchbase, company announcement). Series H (May 28, 2026, $965B) is reported by Forge Global and Pinggy Blog but lacks confirmation from primary financial news or company announcement. Given that the current date context appears to be early 2026 (based on accessed dates showing 2025-01-10), the Series H may be forward-dated or projected data. The Series G remains the most recent CONFIRMED funding round.",
+                "resolution": "Report Series G ($380B) as the most recent confirmed funding round. Flag Series H as unconfirmed/projected data from secondary sources."
+              }
+            ],
+            "KRQ Coverage": {
+              "Funding Round Identification": {
+                "status": "COVERED",
+                "canonical": "YES - Company announcements from Anthropic.com provide primary source confirmation",
+                "sources": [
+                  "Anthropic Series F announcement",
+                  "Anthropic Series E announcement",
+                  "CNBC",
+                  "TechCrunch",
+                  "Crunchbase"
+                ]
+              },
+              "Valuation Confirmation": {
+                "status": "COVERED",
+                "canonical": "YES - Company announcements confirm valuations",
+                "sources": [
+                  "Anthropic Series F ($183B)",
+                  "Anthropic Series E ($61.5B)",
+                  "CNBC/TechCrunch/Crunchbase for Series G ($380B)"
+                ]
+              },
+              "Comparative Context": {
+                "status": "COVERED",
+                "canonical": "SECONDARY - Pinggy Blog provides comparative timeline",
+                "sources": [
+                  "Pinggy Blog funding history",
+                  "Forge Global data"
+                ]
+              },
+              "Source Reliability": {
+                "status": "COVERED",
+                "canonical": "YES - Multiple high-credibility financial news sources",
+                "sources": [
+                  "CNBC",
+                  "TechCrunch",
+                  "Crunchbase News",
+                  "Anthropic company announcements"
+                ]
+              }
+            },
+            "Searched And Not Found": [
+              {
+                "query": "Anthropic official press release Series G February 2026",
+                "result": "No official Anthropic.com press release for Series G found in search results; information comes from third-party news reports and company statements via other channels"
+              },
+              {
+                "query": "Anthropic Series G SEC filing",
+                "result": "No SEC filing documents found for Series G funding round"
+              }
+            ]
+          }
+        },
+        {
+          "run": 3,
+          "n_sources": 8,
+          "n_retrieved_true": 8,
+          "n_flagged_false": 0,
+          "spot_checks": [
+            {
+              "url": "https://news.crunchbase.com/ai/anthropic-raises-30b-second-largest-deal-all-time",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            },
+            {
+              "url": "https://fortune.com/2026/06/01/anthropic-confidentially-files-ipo-965-billion-valuation",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            }
+          ],
+          "verdict": "PASS",
+          "phase4_raw_outputs": {
+            "Intel Items": [
+              {
+                "source": "Anthropic Official Newsroom",
+                "query_used": "Anthropic $965 billion valuation official announcement May 2026",
+                "URL": "https://www.anthropic.com/news/series-h",
+                "published": "May 28, 2026",
+                "accessed": "2026-01-09",
+                "persona": "Primary Source",
+                "media_mode": "Owned",
+                "facts": "Anthropic raised $65 billion in Series H funding led by Altimeter Capital, Dragoneer, Greenoaks, and Sequoia Capital, valuing the company at $965 billion post-money. The round includes $15 billion of previously committed investments from hyperscalers, including $5 billion from Amazon. Run-rate revenue crossed $47 billion earlier in May 2026. Strategic infrastructure partners Micron, Samsung, and SK hynix also joined the round.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "TechCrunch",
+                "query_used": "Anthropic most recent funding round 2024 2025 valuation",
+                "URL": "https://techcrunch.com/2026/05/28/anthropic-raises-65-billion-nears-1t-valuation-ahead-of-ipo",
+                "published": "May 28, 2026",
+                "accessed": "2026-01-09",
+                "persona": "Trade Press",
+                "media_mode": "Earned",
+                "facts": "Anthropic raised $65 billion at a $965 billion post-money valuation in its Series H round. The round was co-led by Altimeter Capital, Dragoneer, Greenoaks, Sequoia Capital, Capital Group, Coatue, D1 Capital Partners, and others. OpenAI was last valued at $852 billion post-money in March 2026. The company said its run rate revenue crossed $47 billion earlier in May 2026.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Crunchbase News",
+                "query_used": "Anthropic Series H funding round May 2026 valuation",
+                "URL": "https://news.crunchbase.com/ai/anthropic-nears-1t-valuation-65b-seriesh",
+                "published": "May 28, 2026",
+                "accessed": "2026-01-09",
+                "persona": "Trade Press",
+                "media_mode": "Earned",
+                "facts": "Anthropic raised $65 billion in Series H funding at a $965 billion post-money valuation. The amount includes previously announced corporate-led rounds by Amazon ($5 billion) and Google ($10 billion), bringing the new funding in the latest raise to $50 billion. The round was led by Altimeter Capital, Dragoneer, Greenoaks and Sequoia Capital. OpenAI's most recent valuation was $852 billion post-money in March 2026.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Fortune",
+                "query_used": "Anthropic $965 billion valuation official announcement May 2026",
+                "URL": "https://fortune.com/2026/06/01/anthropic-confidentially-files-ipo-965-billion-valuation",
+                "published": "June 1, 2026",
+                "accessed": "2026-01-09",
+                "persona": "Mainstream Financial Press",
+                "media_mode": "Earned",
+                "facts": "Anthropic raised $65 billion in a funding round at a $965 billion valuation, eclipsing OpenAI's value for the first time. Anthropic confidentially submitted draft paperwork for a public listing on June 1, 2026. The company's annualized run rate revenue will surpass $50 billion by the end of June 2026.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Anthropic Official Newsroom",
+                "query_used": "Anthropic most recent funding round 2024 2025 valuation",
+                "URL": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation",
+                "published": "September 2, 2025",
+                "accessed": "2026-01-09",
+                "persona": "Primary Source",
+                "media_mode": "Owned",
+                "facts": "Anthropic completed a Series F fundraising of $13 billion led by ICONIQ, valuing Anthropic at $183 billion post-money. This was the round prior to Series G (February 2026) and Series H (May 2026).",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "CNBC",
+                "query_used": "Anthropic most recent funding round 2024 2025 valuation",
+                "URL": "https://www.cnbc.com/2026/02/12/anthropic-closes-30-billion-funding-round-at-380-billion-valuation.html",
+                "published": "February 12, 2026",
+                "accessed": "2026-01-09",
+                "persona": "Mainstream Financial Press",
+                "media_mode": "Earned",
+                "facts": "Anthropic closed a $30 billion Series G funding round at a $380 billion post-money valuation. The round was led by Coatue and Singapore sovereign wealth fund GIC. This was the round immediately preceding the Series H in May 2026.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Crunchbase News",
+                "query_used": "Anthropic Series G funding round February 2026 $380 billion valuation",
+                "URL": "https://news.crunchbase.com/ai/anthropic-raises-30b-second-largest-deal-all-time",
+                "published": "February 12, 2026",
+                "accessed": "2026-01-09",
+                "persona": "Trade Press",
+                "media_mode": "Earned",
+                "facts": "Anthropic raised $30 billion in Series G funding at a $380 billion post-money valuation. The financing was the second-largest venture funding deal of all time at that time, following only OpenAI's $40 billion funding in 2025. GIC and Coatue led the raise.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "TechCrunch",
+                "query_used": "Anthropic Series G funding round February 2026 $380 billion valuation",
+                "URL": "https://techcrunch.com/2026/02/12/anthropic-raises-another-30-billion-in-series-g-with-a-new-value-of-380-billion",
+                "published": "February 12, 2026",
+                "accessed": "2026-01-09",
+                "persona": "Trade Press",
+                "media_mode": "Earned",
+                "facts": "Anthropic concluded a $30 billion Series G fundraising round with a new valuation of $380 billion, up from the previous Series F valuation of $183 billion. The round was led by GIC and Coatue.",
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              }
+            ],
+            "Failed Retrievals": [
+              {
+                "URL": "https://www.reuters.com/business/anthropic-raises-65-billion-now-valued-965-billion-2026-05-28",
+                "error": "HTTP 401 - Paywall/access restriction",
+                "attempts": 1
+              },
+              {
+                "URL": "https://www.wsj.com/tech/ai/anthropic-raising-10-billion-at-350-billion-value-62af49f4",
+                "error": "HTTP 401 - Paywall/access restriction",
+                "attempts": 1
+              },
+              {
+                "URL": "https://www.bloomberg.com/news/articles/2026-05-28/anthropic-raises-at-965-billion-valuation-eclipsing-openai",
+                "error": "HTTP 403 - Access forbidden",
+                "attempts": 1
+              }
+            ],
+            "Anomalies": [
+              {
+                "description": "Discrepancy in Series H amount raised: Public.com/Nasdaq Private Markets data shows Series H-1 as '$19B' and '$46B' split, while Anthropic's official announcement and multiple news sources report '$65 billion'. Crunchbase clarifies that the $65B 'includes previously announced corporate-led rounds by Amazon ($5 billion) and Google ($10 billion)', suggesting the $65B figure includes $15B of previously committed hyperscaler investments, with approximately $50B being new funding.",
+                "status": "RESOLVED - The $65B figure is the total round size including previously committed capital; the post-money valuation of $965B is consistent across all sources."
+              }
+            ],
+            "KRQ Coverage": {
+              "Cluster 1 - Funding Round Identification": {
+                "status": "COVERED",
+                "canonical": "RETRIEVED - Anthropic official newsroom announcement confirms Series H, May 28, 2026, $65B raised",
+                "secondary": "TechCrunch, Crunchbase, Fortune, CNBC all corroborate"
+              },
+              "Cluster 2 - Valuation Confirmation": {
+                "status": "COVERED",
+                "canonical": "RETRIEVED - Anthropic official newsroom confirms $965B post-money valuation",
+                "secondary": "Multiple independent sources (TechCrunch, Crunchbase, Fortune) corroborate $965B figure"
+              },
+              "Cluster 3 - Source Verification": {
+                "status": "COVERED",
+                "canonical": "RETRIEVED - Primary source from Anthropic's owned media (anthropic.com/news/series-h)",
+                "secondary": "TechCrunch, Crunchbase News, Fortune, CNBC provide independent corroboration"
+              }
+            },
+            "Searched And Not Found": [
+              {
+                "query": "Anthropic Series C funding round valuation 2024",
+                "finding": "No relevant results for 2024 Series C; Series C was completed in May 2023 at approximately $4.1B valuation per Wikipedia and historical records. Not relevant to most recent funding round question."
+              },
+              {
+                "query": "Anthropic valuation conflicting reports May 2026",
+                "finding": "No substantive conflicting reports found on the $965B valuation figure. All major sources align on this number."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "model": "mistral-large-latest",
+      "backend": "mistral",
+      "runs": [
+        {
+          "run": 1,
+          "n_sources": 4,
+          "n_retrieved_true": 4,
+          "n_flagged_false": 0,
+          "spot_checks": [
+            {
+              "url": "https://www.cnbc.com/2026/05/28/anthropic-open-ai-startup-value.html",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            },
+            {
+              "url": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            }
+          ],
+          "verdict": "PASS",
+          "phase4_raw_outputs": {
+            "Intel Items": [
+              {
+                "source": "CNBC",
+                "query_used": "Anthropic most recent funding round valuation 2023 2024",
+                "URL": "https://www.cnbc.com/2026/05/28/anthropic-open-ai-startup-value.html",
+                "published": "May 28, 2026",
+                "accessed": "June 6, 2026",
+                "persona": "Industry Analyst",
+                "media_mode": "Earned",
+                "facts": {
+                  "funding_round": "Series H",
+                  "amount_raised": "$65 billion",
+                  "valuation": "$965 billion",
+                  "lead_investors": [
+                    "Altimeter Capital",
+                    "Dragoneer",
+                    "Greenoaks",
+                    "Sequoia Capital"
+                  ],
+                  "previous_commitments": "$15 billion, including $5 billion from Amazon"
+                },
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Anthropic (Company Press Release)",
+                "query_used": "Anthropic press release most recent funding round valuation",
+                "URL": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation",
+                "published": "September 2, 2025",
+                "accessed": "June 6, 2026",
+                "persona": "Corporate Spokesperson",
+                "media_mode": "Owned",
+                "facts": {
+                  "funding_round": "Series F",
+                  "amount_raised": "$13 billion",
+                  "valuation": "$183 billion",
+                  "lead_investors": [
+                    "ICONIQ",
+                    "Fidelity Management & Research Company",
+                    "Lightspeed Venture Partners"
+                  ],
+                  "revenue_run_rate": "Over $5 billion as of August 2025"
+                },
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Bybit Wiki",
+                "query_used": "Anthropic valuation discrepancy sources 2023 2024",
+                "URL": "https://www.bybit.com/my-MM/wiki/article/anthropic-valuation-61b-funding-growth",
+                "published": "July 29, 2026",
+                "accessed": "June 6, 2026",
+                "persona": "Industry Analyst",
+                "media_mode": "Earned",
+                "facts": {
+                  "Series_D_valuation": "$20\u201325 billion (September 2023)",
+                  "Series_D_extension_valuation": "$18 billion (Spring 2024)",
+                  "Series_E_valuation": "$61 billion (Early 2025)"
+                },
+                "confidence": "LIKELY",
+                "retrieved": true
+              },
+              {
+                "source": "TechCrunch",
+                "query_used": "Anthropic Series C or D funding round valuation",
+                "URL": "https://techcrunch.com/2023/05/23/anthropic-raises-350m-to-build-next-gen-ai-assistants",
+                "published": "May 23, 2023",
+                "accessed": "June 6, 2026",
+                "persona": "Journalist",
+                "media_mode": "Earned",
+                "facts": {
+                  "funding_round": "Series C",
+                  "amount_raised": "$450 million",
+                  "lead_investor": "Spark Capital",
+                  "reported_valuation": "$4.1 billion"
+                },
+                "confidence": "LIKELY",
+                "retrieved": true
+              }
+            ],
+            "Failed Retrievals": [
+              {
+                "source": "Reuters",
+                "query_used": "Anthropic most recent funding round valuation 2023 2024",
+                "URL": "https://www.reuters.com/business/anthropic-raises-65-billion-now-valued-965-billion-2026-05-28",
+                "reason": "HTTP 401 (Unauthorized)"
+              }
+            ],
+            "Anomalies": [
+              {
+                "description": "Discrepancy in reported valuations across funding rounds. Series C (2023) reported at $4.1 billion, while Series F (2025) is $183 billion and Series H (2026) is $965 billion.",
+                "sources": [
+                  "TechCrunch (Series C)",
+                  "Anthropic Press Release (Series F)",
+                  "CNBC (Series H)"
+                ]
+              }
+            ],
+            "KRQ Coverage": [
+              {
+                "cluster": "Funding Round Identification",
+                "status": "COVERED",
+                "canonical_or_secondary": "SECONDARY"
+              },
+              {
+                "cluster": "Valuation Disclosure",
+                "status": "COVERED",
+                "canonical_or_secondary": "SECONDARY"
+              },
+              {
+                "cluster": "Source Credibility and Corroboration",
+                "status": "COVERED",
+                "canonical_or_secondary": "SECONDARY"
+              },
+              {
+                "cluster": "Contextual Validation",
+                "status": "COVERED",
+                "canonical_or_secondary": "SECONDARY"
+              }
+            ],
+            "Searched And Not Found": [
+              "Direct SEC filing confirming the $965 billion valuation",
+              "Official Anthropic press release for the $965 billion valuation"
+            ]
+          }
+        },
+        {
+          "run": 2,
+          "n_sources": 5,
+          "n_retrieved_true": 3,
+          "n_flagged_false": 2,
+          "spot_checks": [
+            {
+              "url": "https://www.forbes.com/sites/alexkonrad/2024/01/11/anthropic-750million-funding-round-menlo-ventures",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            },
+            {
+              "url": "https://startupintros.com/orgs/anthropic",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            }
+          ],
+          "verdict": "PASS",
+          "phase4_raw_outputs": {
+            "Intel Items": [
+              {
+                "source": "Forbes",
+                "query_used": "Anthropic $750 million funding round February 2024",
+                "URL": "https://www.forbes.com/sites/alexkonrad/2024/01/11/anthropic-750million-funding-round-menlo-ventures",
+                "published": "2024-01-11",
+                "accessed": "2024-06-20",
+                "persona": "Industry Analyst",
+                "media_mode": "Earned",
+                "facts": {
+                  "funding_amount": "$750 million",
+                  "valuation": "$18.4 billion",
+                  "lead_investor": "Menlo Ventures",
+                  "funding_structure": "Special Purpose Vehicle (SPV)",
+                  "date_of_round": "Early 2024"
+                },
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "CNBC",
+                "query_used": "Anthropic $750 million funding round February 2024",
+                "URL": "https://www.cnbc.com/2023/12/21/openai-rival-anthropic-in-talks-to-raise-750-million-funding-round.html",
+                "published": "2023-12-21",
+                "accessed": "2024-06-20",
+                "persona": "Business Reporter",
+                "media_mode": "Earned",
+                "facts": {
+                  "funding_amount": "$750 million",
+                  "valuation": "Up to $18.4 billion",
+                  "lead_investor": "Menlo Ventures",
+                  "date_of_round": "Early 2024"
+                },
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Reuters",
+                "query_used": "Anthropic February 2024 funding round valuation Menlo Ventures",
+                "URL": "UNKNOWN",
+                "published": "2023-12-21",
+                "accessed": "2024-06-20",
+                "persona": "Financial Reporter",
+                "media_mode": "Earned",
+                "facts": {
+                  "funding_amount": "$750 million",
+                  "valuation": "$18.4 billion (pre-money)",
+                  "lead_investor": "Menlo Ventures"
+                },
+                "confidence": "LIKELY",
+                "retrieved": false,
+                "_harness_note": "URL not found in this run's real tool-call results \u2014 overridden by the harness, not trusted from model output."
+              },
+              {
+                "source": "Startup Intros (Crunchbase)",
+                "query_used": "Anthropic funding round lead investors 2023 2024",
+                "URL": "https://startupintros.com/orgs/anthropic",
+                "published": null,
+                "accessed": "2024-06-20",
+                "persona": "Data Aggregator",
+                "media_mode": "Owned",
+                "facts": {
+                  "valuation": "$18.4 billion",
+                  "date_of_round": "March 27, 2024",
+                  "lead_investor": "Amazon"
+                },
+                "confidence": "LIKELY",
+                "retrieved": true
+              },
+              {
+                "source": "The Information (via LinkedIn)",
+                "query_used": "Anthropic $750 million funding round February 2024",
+                "URL": "UNKNOWN",
+                "published": null,
+                "accessed": "2024-06-20",
+                "persona": "Industry Analyst",
+                "media_mode": "Earned",
+                "facts": {
+                  "funding_amount": "$750 million",
+                  "valuation": "$18.4 billion",
+                  "lead_investor": "Menlo Ventures"
+                },
+                "confidence": "LIKELY",
+                "retrieved": false,
+                "_harness_note": "URL not found in this run's real tool-call results \u2014 overridden by the harness, not trusted from model output."
+              }
+            ],
+            "Failed Retrievals": [
+              {
+                "source": "Bloomberg",
+                "URL": "https://www.bloomberg.com/news/articles/2023-12-05/anthropic-raises-450-million-as-amazon-microsoft-back-ai-startup",
+                "error": "HTTP 403"
+              },
+              {
+                "source": "Reuters",
+                "URL": "https://www.reuters.com/technology/amazon-backed-anthropic-raises-750-mln-series-c-round-2024-02-23/",
+                "error": "HTTP 401"
+              },
+              {
+                "source": "TechCrunch",
+                "URL": "https://techcrunch.com/2024/02/23/anthropic-raises-750m-at-18-4b-valuation-led-by-menlo-ventures/",
+                "error": "HTTP 404"
+              },
+              {
+                "source": "Crunchbase Company Financials",
+                "URL": "https://www.crunchbase.com/organization/anthropic/company_financials",
+                "error": "HTTP 403"
+              },
+              {
+                "source": "The Information",
+                "URL": "https://www.theinformation.com/articles/anthropic-raises-750-million-at-18-4-billion-valuation",
+                "error": "HTTP 404"
+              },
+              {
+                "source": "Business Insider",
+                "URL": "https://www.businessinsider.com/anthropic-ai-startup-funding-valuation-amazon-google-2024-2",
+                "error": "HTTP 404"
+              }
+            ],
+            "Anomalies": [
+              {
+                "description": "Valuation discrepancy in future funding rounds (e.g., $61.5B in 2025, $965B in 2026).",
+                "action": "Flagged for context but not integrated into primary answer."
+              },
+              {
+                "description": "Use of SPV structure for the $750 million round.",
+                "action": "Noted as unusual but does not affect valuation."
+              }
+            ],
+            "KRQ Coverage": [
+              {
+                "cluster": "Most Recent Funding Round Identification",
+                "coverage": "COVERED",
+                "canonical_secondary": "SECONDARY"
+              },
+              {
+                "cluster": "Valuation Disclosure",
+                "coverage": "COVERED",
+                "canonical_secondary": "SECONDARY"
+              },
+              {
+                "cluster": "Source Credibility and Corroboration",
+                "coverage": "COVERED",
+                "canonical_secondary": "SECONDARY"
+              },
+              {
+                "cluster": "Contextual Benchmarking",
+                "coverage": "COVERED",
+                "canonical_secondary": "SECONDARY"
+              }
+            ],
+            "Searched And Not Found": [
+              "Official press release from Anthropic regarding the $750 million funding round.",
+              "Regulatory filings (SEC, etc.) confirming the $18.4 billion valuation.",
+              "Primary source statement from Menlo Ventures confirming the round."
+            ]
+          }
+        },
+        {
+          "run": 3,
+          "n_sources": 5,
+          "n_retrieved_true": 3,
+          "n_flagged_false": 2,
+          "spot_checks": [
+            {
+              "url": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            },
+            {
+              "url": "https://techcrunch.com/2026/06/23/after-betting-the-firm-on-anthropic-menlo-ventures-raises-victorious-3b-fund/",
+              "reachable": true,
+              "status": 200,
+              "error": null
+            }
+          ],
+          "verdict": "PASS",
+          "phase4_raw_outputs": {
+            "Intel Items": [
+              {
+                "source": "TechCrunch",
+                "query_used": "Anthropic most recent funding round valuation 2024 site:techcrunch.com",
+                "URL": "https://techcrunch.com/2026/06/23/after-betting-the-firm-on-anthropic-menlo-ventures-raises-victorious-3b-fund/",
+                "published": "2026-06-23",
+                "accessed": "2024-06-20",
+                "persona": "Industry Analyst",
+                "media_mode": "Earned",
+                "facts": {
+                  "funding_round": "Series D",
+                  "date": "2024",
+                  "lead_investor": "Menlo Ventures",
+                  "capital_raised": "Over $500 million",
+                  "valuation": "$18 billion",
+                  "previous_valuation": "Pre-Series D (not explicitly stated, but implied to be significantly lower)"
+                },
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Anthropic (Company Press Release)",
+                "query_used": "Anthropic press release most recent funding round 2024",
+                "URL": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation",
+                "published": "2025-09-02",
+                "accessed": "2024-06-20",
+                "persona": "Corporate Spokesperson",
+                "media_mode": "Owned",
+                "facts": {
+                  "funding_round": "Series F",
+                  "date": "September 2025",
+                  "lead_investors": [
+                    "ICONIQ",
+                    "Fidelity Management & Research Company",
+                    "Lightspeed Venture Partners"
+                  ],
+                  "capital_raised": "$13 billion",
+                  "valuation": "$183 billion post-money",
+                  "revenue_growth": "From $1 billion (start of 2025) to over $5 billion (August 2025)"
+                },
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Crunchbase News",
+                "query_used": "Anthropic valuation Crunchbase 2024",
+                "URL": "https://news.crunchbase.com/ai/anthropic-funding-lightspeed-xai-openai/",
+                "published": "Not explicitly stated (referenced February 2024)",
+                "accessed": "2024-06-20",
+                "persona": "Industry Analyst",
+                "media_mode": "Earned",
+                "facts": {
+                  "valuation": "$18.5 billion",
+                  "date": "February 2024",
+                  "funding_round": "Series D (implied)"
+                },
+                "confidence": "CONFIRMED",
+                "retrieved": true
+              },
+              {
+                "source": "Reuters",
+                "query_used": "Anthropic most recent funding round valuation 2024 site:reuters.com",
+                "URL": "https://www.reuters.com/technology/artificial-intelligence/anthropic-raise-2-bln-deal-valuing-ai-startup-60-bln-wsj-reports-2025-01-07/",
+                "published": "2025-01-07",
+                "accessed": "2024-06-20",
+                "persona": "N/A",
+                "media_mode": "N/A",
+                "facts": {},
+                "confidence": "UNKNOWN",
+                "retrieved": false,
+                "_harness_note": "URL not found in this run's real tool-call results \u2014 overridden by the harness, not trusted from model output."
+              },
+              {
+                "source": "Reuters",
+                "query_used": "Anthropic funding round SEC filing 2024",
+                "URL": "https://www.reuters.com/technology/artificial-intelligence/anthropic-raise-750-mln-menlo-ventures-led-funding-round-information-2023-12-21/",
+                "published": "2023-12-21",
+                "accessed": "2024-06-20",
+                "persona": "N/A",
+                "media_mode": "N/A",
+                "facts": {},
+                "confidence": "UNKNOWN",
+                "retrieved": false,
+                "_harness_note": "URL not found in this run's real tool-call results \u2014 overridden by the harness, not trusted from model output."
+              }
+            ],
+            "Failed Retrievals": [
+              {
+                "URL": "https://www.reuters.com/technology/artificial-intelligence/anthropic-raise-2-bln-deal-valuing-ai-startup-60-bln-wsj-reports-2025-01-07/",
+                "reason": "HTTP 401 (Unauthorized)"
+              },
+              {
+                "URL": "https://www.reuters.com/technology/artificial-intelligence/anthropic-raise-750-mln-menlo-ventures-led-funding-round-information-2023-12-21/",
+                "reason": "HTTP 401 (Unauthorized)"
+              }
+            ],
+            "Anomalies": [],
+            "KRQ Coverage": [
+              {
+                "cluster": "Funding Round Details",
+                "coverage": "COVERED",
+                "canonical_secondary": "SECONDARY",
+                "notes": "Confirmed date (early 2024), lead investors (Menlo Ventures), and capital raised (~$500M)."
+              },
+              {
+                "cluster": "Valuation Metrics",
+                "coverage": "COVERED",
+                "canonical_secondary": "SECONDARY",
+                "notes": "Confirmed valuation ($18B) and comparison to previous round (Series C, pre-product)."
+              },
+              {
+                "cluster": "Source Reliability and Corroboration",
+                "coverage": "COVERED",
+                "canonical_secondary": "SECONDARY",
+                "notes": "Two independent sources (TechCrunch, Crunchbase) confirm the $18B valuation."
+              }
+            ],
+            "Searched And Not Found": [
+              "Direct SEC filings for Anthropic's 2024 funding round",
+              "Wall Street Journal articles on Anthropic's 2024 valuation (paywalled)",
+              "Financial Times articles on Anthropic's 2024 valuation (paywalled)",
+              "Bloomberg articles on Anthropic's 2024 valuation (no direct coverage found)"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "h1_verdict": "PASS"
+}

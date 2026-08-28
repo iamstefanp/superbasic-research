@@ -1,0 +1,76 @@
+{
+  "hypothesis": "H4",
+  "questions": {
+    "factual_scientific": "What is the current world record time for the men's 100m sprint, and who holds it?",
+    "higher_ambiguity": "What was the primary cause of the 2026 slowdown in venture capital funding for AI startups?"
+  },
+  "results": [
+    {
+      "topic": "factual_scientific",
+      "question": "What is the current world record time for the men's 100m sprint, and who holds it?",
+      "model": "google/gemini-2.5-pro",
+      "n_sources": 0,
+      "n_retrieved_true": 0,
+      "n_flagged_false": 0,
+      "spot_checks": [],
+      "verdict": "FLAG"
+    },
+    {
+      "topic": "factual_scientific",
+      "question": "What is the current world record time for the men's 100m sprint, and who holds it?",
+      "model": "mistral-large-latest",
+      "n_sources": 6,
+      "n_retrieved_true": 6,
+      "n_flagged_false": 0,
+      "spot_checks": [
+        {
+          "url": "https://worldathletics.org/records/all-time-toplists/sprints/100-metres/outdoor/men/senior",
+          "reachable": true,
+          "status": 200,
+          "error": null
+        },
+        {
+          "url": "https://worldathletics.org/records/by-progression/16647",
+          "reachable": true,
+          "status": 200,
+          "error": null
+        }
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "topic": "higher_ambiguity",
+      "question": "What was the primary cause of the 2026 slowdown in venture capital funding for AI startups?",
+      "model": "google/gemini-2.5-pro",
+      "n_sources": 0,
+      "n_retrieved_true": 0,
+      "n_flagged_false": 0,
+      "spot_checks": [],
+      "verdict": "FLAG"
+    },
+    {
+      "topic": "higher_ambiguity",
+      "question": "What was the primary cause of the 2026 slowdown in venture capital funding for AI startups?",
+      "model": "mistral-large-latest",
+      "n_sources": 7,
+      "n_retrieved_true": 7,
+      "n_flagged_false": 0,
+      "spot_checks": [
+        {
+          "url": "https://www.talkingseed.com/news/global-vc-recovery-in-early-2026-as-funding-returns",
+          "reachable": true,
+          "status": 200,
+          "error": null
+        },
+        {
+          "url": "https://internationalbanker.com/brokerage/record-funding-levels-mask-venture-capitals-bifurcated-funding-landscape-in-2026",
+          "reachable": true,
+          "status": 200,
+          "error": null
+        }
+      ],
+      "verdict": "PASS"
+    }
+  ],
+  "h4_verdict": "INCONCLUSIVE"
+}
