@@ -1,0 +1,174 @@
+name: Red-team evaluation
+
+# Trigger taxonomy — see MAINTENANCE.md for the full reasoning behind
+# each of these, not just the mechanics.
+on:
+  # Fast, free, no-API-key gate: runs on every change to the code the
+  # red-team suite exists to protect. Catches "someone touched
+  # enforcement logic and didn't re-verify" before merge.
+  pull_request:
+    paths:
+      - "sbr.py"
+      - "harness/**"
+      - "tests/redteam/**"
+
+  # Calendar-based minimum cadence — the only thing that catches silent
+  # drift: a provider repointing a model alias to a materially
+  # different model with no version bump, or a slow behavioral change
+  # nobody filed an issue about yet.
+  schedule:
+    - cron: "0 6 1 * *"  # 06:00 UTC on the 1st of every month
+
+  # Pre-release checklist item, or "I want to check this right now."
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Why this run is happening (shows in the run log)"
+        required: false
+        default: "manual run"
+
+  # External trigger — for a monitoring process that watches for new
+  # model releases or incoming failure reports and wants to fire this
+  # without a human clicking a button or this repo needing to know
+  # anything about how that monitoring works.
+  repository_dispatch:
+    types: [new-model-released, failure-reported]
+
+permissions:
+  contents: write  # needed to commit evidence files back after a full run
+
+jobs:
+  fast-checks:
+    name: H3 — enforcement precision (no API keys needed)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run H3
+        working-directory: tests/redteam
+        run: python3 test_enforcement_near_miss.py
+
+  full-redteam:
+    name: Full red-team suite (H1-H5, live models)
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r harness/requirements.txt
+
+      - name: Log trigger context
+        run: |
+          echo "Trigger: ${{ github.event_name }}"
+          echo "Reason: ${{ github.event.inputs.reason || github.event.action || 'scheduled' }}"
+
+      # Each test runs independently — one failing/erroring test
+      # shouldn't prevent the others from producing evidence. Exit
+      # codes are captured explicitly as step outputs (GitHub Actions'
+      # own success/failure outcome is binary and can't tell exit 1
+      # apart from exit 2 — capturing $? ourselves is the only way to
+      # preserve _shared.py's PASS/FAIL/INCONCLUSIVE distinction here).
+      - name: H1 — repeat-run consistency
+        id: h1
+        working-directory: tests/redteam
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+        run: |
+          set +e
+          python3 test_repeat_consistency.py
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: H2 — injection resistance
+        id: h2
+        working-directory: tests/redteam
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: |
+          set +e
+          python3 test_prompt_injection.py
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: H4 — cross-domain generalization
+        id: h4
+        working-directory: tests/redteam
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+        run: |
+          set +e
+          python3 test_cross_domain.py
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: H5 — mode robustness (HEAVY)
+        id: h5
+        working-directory: tests/redteam
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: |
+          set +e
+          python3 test_heavy_mode.py
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Write job summary
+        if: always()
+        run: |
+          verdict_for() {
+            case "$1" in
+              0) echo "PASS" ;;
+              1) echo "FAIL" ;;
+              2) echo "INCONCLUSIVE" ;;
+              *) echo "unknown ($1)" ;;
+            esac
+          }
+          echo "## Red-team run — $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Hypothesis | Exit code | Verdict |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          for pair in "H1:${{ steps.h1.outputs.exit_code }}" "H2:${{ steps.h2.outputs.exit_code }}" "H4:${{ steps.h4.outputs.exit_code }}" "H5:${{ steps.h5.outputs.exit_code }}"; do
+            hyp="${pair%%:*}"; code="${pair##*:}"
+            echo "| $hyp | $code | $(verdict_for "$code") |" >> "$GITHUB_STEP_SUMMARY"
+          done
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "H3 runs separately in the fast-checks job on every PR touching harness code." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit evidence
+        if: always()
+        run: |
+          git config user.name "superbasic-research-bot"
+          git config user.email "actions@github.com"
+          git add tests/redteam/evidence/
+          if ! git diff --cached --quiet; then
+            git commit -m "Automated red-team run — $(date -u +%Y-%m-%dT%H:%M:%SZ) — trigger: ${{ github.event_name }}"
+            git push
+          else
+            echo "No new evidence to commit."
+          fi
+
+      # Only a genuine FAIL (exit 1) fails the workflow. An
+      # INCONCLUSIVE (exit 2, e.g. a provider outage) is surfaced in
+      # the summary and evidence but does not block — see
+      # MAINTENANCE.md for why treating those the same would make this
+      # workflow noisy enough to get ignored.
+      - name: Gate on real failures only
+        if: always()
+        run: |
+          FAILED=0
+          for step_outcome in "${{ steps.h1.outcome }}" "${{ steps.h2.outcome }}" "${{ steps.h4.outcome }}" "${{ steps.h5.outcome }}"; do
+            if [ "$step_outcome" = "failure" ]; then FAILED=1; fi
+          done
+          if [ "$FAILED" = "1" ]; then
+            echo "At least one hypothesis step exited non-zero. Check the step logs"
+            echo "and the committed evidence to determine FAIL vs INCONCLUSIVE before"
+            echo "treating this as a confirmed regression."
+            exit 1
+          fi

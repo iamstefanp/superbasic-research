@@ -397,6 +397,10 @@ python3 tests/redteam/test_cross_domain.py
 python3 tests/redteam/test_heavy_mode.py
 ```
 
+This suite also runs in CI — see [`MAINTENANCE.md`](MAINTENANCE.md) for
+the full trigger taxonomy (new model releases, failure reports, silent
+provider drift, and more), the schedule, and how to add a new model.
+
 Adding a new model to the model-support table above means adding it to
 the relevant test file's target list and re-running — the harness code
 itself doesn't change. See [`tests/redteam/PROTOCOL.md`](tests/redteam/PROTOCOL.md)
