@@ -72,32 +72,63 @@ runtime inserts, not something the model narrates. That's how the
 a fundamentally weaker mode no matter what the prompt says, and this
 file should keep saying so until that stops being true.
 
+## Round 1.5 — 2026-08-28, same day, against the already-fixed SKILL.md
+
+Three more, tested against `SKILL.md` **after** the tool-access gate
+above was added — the real question here isn't "does the structure
+transfer," it's "does the fix actually work."
+
+| Model | Result |
+|---|---|
+| **Llama 3.3 70B** (OpenRouter, cloud) | **Fabricated, gate and all.** Skipped the "Before Anything Else" tool-access declaration entirely — went straight to BRIEF, invented Crunchbase/TechCrunch/Forbes figures, scored them, stamped CONFIRMED. **The fix did not stop this model.** Confirms the limitation stated in the fix's own commit message: a prompt instruction only works on a model willing to be governed by it. |
+| **Ollama / Llama 3.2 3B** (local, zero cloud dependency) | **A different, arguably worse failure.** Didn't engage with the method's structure at all — no BRIEF, no phases, no confidence labels. Answered like a plain chat, invented fake Anthropic co-founder names ("Adam Everitt," "Stephen Anderson," "Andrew Yang" — none real) mixed with real investor names, wrapped in a generic "verify this yourself" hedge that isn't the method's confidence system. Reads like the model was too small to follow a long, structured system prompt at all, so it silently fell back to default chat behavior. |
+| **Perplexity Sonar Pro** (OpenRouter) | **Untested — blocked, not a method finding.** OpenRouter routes Perplexity through bring-your-own-key rather than the shared pool; the shared-pool key returned 401. Needs a Perplexity-specific API key to test. Worth doing anyway — Perplexity is search-native by default, which tests a genuinely different property (does an always-on tool get *used* honestly) than everything above. |
+
+**What this changes about the fix:** it's confirmed useful (it's a real,
+named, checkable instruction where none existed before) and confirmed
+insufficient on its own. Three failure shapes exist, not one:
+(1) fabricate *inside* the method's formatting — Kimi, DeepSeek, now
+Llama 70B, the most dangerous shape because it reads as more credible,
+not less; (2) don't engage with the method's structure at all — Ollama's
+small local Llama, likely a capability ceiling rather than a compliance
+choice; (3) genuinely reason about the constraint and run out of budget
+being honest — GPT-5, Gemini. Only the third is the method actually
+working. A prompt-level gate can, at best, push more models from shape
+(1) toward shape (3). It cannot fix shape (2), and it will never fully
+close shape (1) — that requires the architectural fix already named
+above: real tool-calling where the runtime inserts the search result,
+not the model.
+
 ## Round 2 — pending
 
-Re-run the same six models against the post-fix `SKILL.md`, plus the
-models below, still with `tool_access` requested but no real tool
-wired — the honest test of the fix is whether every model now *stops*
-instead of fabricating, not whether the structure still looks nice.
+Re-run every model tested so far — Kimi, DeepSeek, GPT-5, Gemini,
+Llama 70B, Ollama's local Llama 3.2 — against whatever the *next* fix
+attempt is, since the current gate did not stop Llama 70B. The honest
+test is whether a model now *stops* instead of fabricating, not whether
+the structure still looks nice.
 
-**Models to add**, per the goal of covering what people actually run
-this against:
-- **Grok** (xAI) — `x-ai/grok-*` on OpenRouter
-- **Llama** (Meta) — `meta-llama/llama-*`, at least one large open-weight model, since these are what a lot of self-hosted / local-first users will actually paste this into
-- **Qwen** (Alibaba) — `qwen/qwen-*`, the other major open-weight family, large non-English-speaking user base
+**Models still to add:**
+- **Qwen** (Alibaba) — `qwen/qwen-*` on OpenRouter, the other major
+  open-weight family, large non-English-speaking user base
+- **Perplexity** — needs a Perplexity-specific API key (OpenRouter's
+  shared pool 401s on it, bring-your-own-key only); tests a genuinely
+  different property once it's reachable — does an always-on search
+  tool get *used* honestly, not whether its absence gets disclosed
 - Mistral, retried once the upstream rate limit clears
+- A larger Ollama model (8B+), to separate "too small to follow the
+  system prompt" from "follows it but fabricates like the cloud models
+  did" — the 3B result above can't distinguish those two causes
 
-**Not yet in scope, worth naming rather than silently skipping:**
-Perplexity's own models are search-native by default (the tool-access
-question barely applies — they always have search), so they test a
-different property (does an always-on search tool get used honestly,
-not whether its absence gets disclosed) and belong in a separate round
-once this one is done. Cohere's Command R line is a plausible sixth
-open-weight family if coverage needs to go wider than Llama/Qwen.
+**Deliberately not testing:** Grok, per direction.
 
 ## Status
 
-**Round 1: done, disclosed, fix applied same-session.**
-**Round 2: not yet run** — needs the post-fix `SKILL.md` re-tested
-against all of Round 1 plus Grok, Llama, Qwen, and a working Mistral
-call, before "works across models" can honestly move from "designed to"
-to "verified to."
+**Round 1 (Kimi, DeepSeek, GPT-5, Gemini): done, disclosed, fix applied
+same-session.**
+**Round 1.5 (Llama 70B, Ollama/Llama 3.2 local, Perplexity-blocked):
+done — found the fix insufficient on Llama 70B, found a third failure
+shape on the small local model, found Perplexity needs its own key.**
+**Round 2: not yet run** — needs a fix that actually stops Llama 70B,
+Qwen, a working Mistral call, a larger Ollama model, and Perplexity with
+its own key, before "works across models" can honestly move from
+"designed to" to "verified to."

@@ -31,17 +31,22 @@ written as code instead of prose, for tools that read files directly —
 see **Install** below if that's your setup.
 
 **Cross-model testing, done honestly** — see
-[`tests/CROSS-MODEL.md`](tests/CROSS-MODEL.md) for the real results,
-not a marketing claim. Short version: the phase structure transferred
-cleanly to every model tested (Claude, Gemini, GPT, Kimi, DeepSeek). But
-without a real search tool wired in, two of them — Kimi K2 and
-DeepSeek — fabricated entire source tables (fake outlets, fake dates,
-fake quotes) and stamped them CONFIRMED anyway, using the method's own
-scoring apparatus to make the fabrication look more credible, not less.
-Their two invented numbers for the same fact didn't even agree with each
-other. This is why "Before anything else" in `SKILL.md` now requires an
-explicit tool-access declaration before Phase 1 can open at all — closing
-the gap the test found, not hiding it.
+[`tests/CROSS-MODEL.md`](tests/CROSS-MODEL.md) for the real, ongoing
+results, not a marketing claim. Short version: the phase structure
+transfers cleanly to every model tested (Claude, Gemini, GPT, Llama,
+Kimi, DeepSeek). But without a real search tool wired in, most of
+them — Kimi K2, DeepSeek, and Llama 3.3 70B — fabricated entire source
+tables (fake outlets, fake dates, fake quotes) and stamped them
+CONFIRMED anyway, using the method's own scoring apparatus to make the
+fabrication look more credible, not less. Two independently invented
+numbers for the same fact didn't even agree with each other. A small
+local model run via Ollama failed differently — it didn't engage with
+the method's structure at all and hallucinated plainly instead. `SKILL.md`
+now requires an explicit tool-access declaration before Phase 1 can open
+at all — a real, tested improvement, and **confirmed not sufficient on
+every model** (it didn't stop Llama 70B). The full, current picture —
+including what still fails — is in `tests/CROSS-MODEL.md`, not smoothed
+over here.
 
 ---
 
