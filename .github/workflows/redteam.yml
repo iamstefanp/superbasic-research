@@ -154,21 +154,25 @@ jobs:
             echo "No new evidence to commit."
           fi
 
-      # Only a genuine FAIL (exit 1) fails the workflow. An
-      # INCONCLUSIVE (exit 2, e.g. a provider outage) is surfaced in
-      # the summary and evidence but does not block — see
+      # Only a genuine FAIL (exit_code=1) fails the workflow. An
+      # INCONCLUSIVE (exit_code=2, e.g. a provider outage) is surfaced
+      # in the summary and evidence but does not block — see
       # MAINTENANCE.md for why treating those the same would make this
-      # workflow noisy enough to get ignored.
+      # workflow noisy enough to get ignored. Checking .outputs.exit_code
+      # specifically, NOT .outcome — each hypothesis step's own shell
+      # command always ends in `echo ... >> $GITHUB_OUTPUT`, which exits
+      # 0 regardless of the python script's real result, so .outcome
+      # would always read "success" here and this gate would be dead
+      # code if it checked that instead.
       - name: Gate on real failures only
         if: always()
         run: |
           FAILED=0
-          for step_outcome in "${{ steps.h1.outcome }}" "${{ steps.h2.outcome }}" "${{ steps.h4.outcome }}" "${{ steps.h5.outcome }}"; do
-            if [ "$step_outcome" = "failure" ]; then FAILED=1; fi
+          for code in "${{ steps.h1.outputs.exit_code }}" "${{ steps.h2.outputs.exit_code }}" "${{ steps.h4.outputs.exit_code }}" "${{ steps.h5.outputs.exit_code }}"; do
+            if [ "$code" = "1" ]; then FAILED=1; fi
           done
           if [ "$FAILED" = "1" ]; then
-            echo "At least one hypothesis step exited non-zero. Check the step logs"
-            echo "and the committed evidence to determine FAIL vs INCONCLUSIVE before"
-            echo "treating this as a confirmed regression."
+            echo "At least one hypothesis returned a real FAIL (exit_code=1)."
+            echo "Check the step logs and committed evidence for details."
             exit 1
           fi
