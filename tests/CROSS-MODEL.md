@@ -114,8 +114,10 @@ tested and are logged above as real findings, but are not part of the
 maintained target and won't be chased further absent new direction.
 
 **Status against the six — all covered:**
-- Claude — covered by the existing 10-card battery (real tool access
-  already; not re-tested here as a new data point)
+- Claude — covered by the existing 10-card battery, and now separately
+  verified under this same harness too (see Round 3 below): 20 of 23
+  sources genuinely retrieved, 3 correctly flagged, needed ~20k tokens
+  (vs. the 6k default) to complete a phase without truncating
 - Gemini — clean under the harness
 - ChatGPT (GPT-5) — clean under the harness
 - DeepSeek — clean under the harness
@@ -249,6 +251,47 @@ plumbing. `max_tokens` exhaustion happened to be the honest explanation
 here, confirmed by fixing it and getting a clean result — but that
 diagnosis took investigation, the same discipline this file has applied
 throughout, not an assumption.
+
+## Round 3 (continued) — Claude, under the harness itself
+
+Every prior Claude data point in this file came from the 10-card
+battery — a different test, since that battery *is* Claude running
+`sbr.py` with real tool access via Claude Code's own tools, not this
+harness. This is the first time Claude was run through
+`harness/executor.py` specifically, via OpenRouter
+(`anthropic/claude-sonnet-5`), for direct comparability with every
+other model tested here.
+
+**First attempt (6,000 tokens, the harness default): 0 sources.** Same
+`max_tokens`-exhaustion pattern as GPT-5 — confirmed by direct
+investigation, not assumed: an isolated Phase-4-only debug run at
+12,000 tokens completed cleanly with 38 real URLs seen, but the full
+Phase 1 → Phase 4 chain (larger combined prompt) still came back empty
+at that same 12,000. Bumped to 20,000 for the full chain and got a
+clean, complete result — Claude's own research and reasoning style
+under this harness runs long, and needed roughly 3–5x the harness's
+default budget to finish a phase, not a fixed amount.
+
+**Result at 20,000 tokens: 23 sources returned, 20 marked
+`retrieved: true`, 3 correctly flagged `retrieved: false`** — a New
+York Times article, a direct WSJ article URL, and an
+`x.com/AnthropicAI` status link that weren't backed by a real tool call
+in this specific run. Unlike every other model tested so far, Claude's
+output was explicit about its own retrieval gaps in the `confidence`
+field itself (e.g. "LIKELY — snippet-level only, not independently
+opened," "best-guess tag, taxonomy file inaccessible") rather than
+silently treating a search snippet as a full read — a real behavioral
+difference worth naming, not just the pass/fail count. Independently
+spot-checked 2 of the 20 genuine sources outside the harness (`curl`,
+HTTP 200): Anthropic's own Series H announcement and the Wikipedia
+article on Anthropic.
+
+**What this adds:** Claude is now verified under the same harness and
+methodology as the other five required models, not just assumed
+equivalent because of the separate battery. 3 of 23 sources not backed
+by a real tool call in this run were caught and flagged exactly as
+designed — the enforcement mechanism doesn't treat any model as exempt,
+Claude included.
 
 ## Round 2 — Qwen
 
