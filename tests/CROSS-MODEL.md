@@ -107,17 +107,22 @@ attempt is, since the current gate did not stop Llama 70B. The honest
 test is whether a model now *stops* instead of fabricating, not whether
 the structure still looks nice.
 
-**Models still to add:**
-- **Qwen** (Alibaba) — `qwen/qwen-*` on OpenRouter, the other major
-  open-weight family, large non-English-speaking user base
-- **Perplexity** — needs a Perplexity-specific API key (OpenRouter's
-  shared pool 401s on it, bring-your-own-key only); tests a genuinely
-  different property once it's reachable — does an always-on search
-  tool get *used* honestly, not whether its absence gets disclosed
-- Mistral, retried once the upstream rate limit clears
-- A larger Ollama model (8B+), to separate "too small to follow the
-  system prompt" from "follows it but fabricates like the cloud models
-  did" — the 3B result above can't distinguish those two causes
+**Support scope, narrowed by direction (2026-08-28):** Claude, Gemini,
+Mistral, ChatGPT, DeepSeek, Llama — nothing beyond this list is a
+priority going forward. Qwen, Perplexity, and both Ollama sizes were
+tested and are logged above as real findings, but are not part of the
+maintained target and won't be chased further absent new direction.
+
+**Status against the six:**
+- Claude — covered by the existing 10-card battery (real tool access
+  already; not re-tested here as a new data point)
+- Gemini — clean under the harness
+- ChatGPT (GPT-5) — clean under the harness
+- DeepSeek — clean under the harness
+- Llama (3.3 70B, cloud) — clean under the harness
+- **Mistral — the one open item.** Root-caused to an OpenRouter-side
+  BYOK routing gap (see Round 3 below), not the key or this harness.
+  Next step is an OpenRouter support ticket, not more retries from here.
 
 **Deliberately not testing:** Grok, per direction.
 
