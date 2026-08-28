@@ -252,19 +252,47 @@ throughout, not an assumption.
   that showed the "didn't engage with the method's structure at all"
   failure in Round 1.5 through the harness surfaced a **different**
   failure: response-protocol garbling under the tool-calling loop,
-  distinct from fabrication. Not yet resolved — the honest open question
-  is whether this is a capability ceiling of a 3B local model specifically
-  (Round 2's still-pending "larger Ollama model" item exists precisely to
-  separate that from "follows the harness but still fails some other
-  way").
-- **Mistral**: still not reliably testable. OpenRouter's shared pool
-  rate-limits it repeatedly (`429`, "temporarily rate-limited upstream —
-  shared_pool"); a BYOK key was configured in OpenRouter's integration
-  settings, and a single direct call succeeded, but two full multi-phase
-  harness runs both failed partway through the same way. Unresolved —
-  next step is confirming in OpenRouter's own usage/spend dashboard that
-  the BYOK key is actually routing traffic before retrying further,
-  since a single successful call doesn't rule out the shared pool simply
+  distinct from fabrication.
+
+  **Round 2's "larger Ollama model" item, done:** re-ran the harness
+  against local `llama3.1:8b`. Result: **a third, more specific failure
+  shape**, not a clean pass. Phase 1 and Phase 4 both returned the
+  model's *intended* tool call as literal JSON text (`{"name":
+  "web_search", "parameters": {...}}`) inside its response content,
+  instead of triggering Ollama's actual `tool_calls` field — the harness
+  correctly saw no real tool call, took the text as the final answer,
+  and extracted that JSON as phase output. 0 sources, not fabrication.
+
+  Root-caused rather than assumed: probed `llama3.1:8b` directly against
+  Ollama's `/api/chat` with a short, minimal prompt and the same tool
+  definition — it returned a proper native `tool_calls` response
+  immediately. So the model *can* tool-call correctly; the failure is
+  specific to the harness's full SBR system prompt (long, multi-section,
+  phase-structured instructions), which appears to degrade its
+  instruction-following enough that it narrates the call instead of
+  issuing it. This cleanly separates from the 3B result: `llama3.2` (3B)
+  doesn't engage with the method's structure at all (capability ceiling);
+  `llama3.1` (8B) understands there's a protocol to follow but loses it
+  specifically under prompt length/complexity — a distinct, more
+  specific failure, not simply "bigger model, same problem, slightly
+  better." Not yet resolved; the honest next step is testing whether a
+  shorter/restructured system prompt (or a model even larger than 8B)
+  closes this gap, not assuming either would.
+- **Mistral**: still not reliably testable, and the root cause has
+  narrowed. The original BYOK key failed OpenRouter's own connection
+  test (`"Operation timed out after 10s"`) — confirmed broken, not a
+  routing/settings issue. A fresh key was generated on Mistral's own
+  console, verified valid directly against `api.mistral.ai` (HTTP 200,
+  54 models returned) and passed OpenRouter's Test button. **Re-running
+  the harness against it still produced the identical 429→shared-pool
+  failure**, and OpenRouter's own Activity dashboard confirms the BYOK
+  usage line stayed flat at $0 through the attempt — meaning OpenRouter
+  is not attempting the key at all, not a propagation delay. This now
+  looks like an OpenRouter-side BYOK routing gap for Mistral specifically,
+  not a problem with the key or this harness. Deprioritized rather than
+  pursued further here — an OpenRouter support ticket is the more
+  productive next step than more retries, since both ends (Mistral's API,
+  OpenRouter's own key test) have been independently confirmed working.
   recovering on its own.
 
 ## Status
@@ -281,11 +309,21 @@ sources under the harness, zero fabricated URLs.** Two real bugs found
 and fixed during live testing, not hidden after the fact: (1) the
 enforcement function's source-list key matching (Kimi's first attempt),
 (2) a hardcoded `max_tokens=4000` too tight for GPT-5's heavy-reasoning
-pattern, now configurable via `SBR_HARNESS_MAX_TOKENS`. **Ollama local
-backend is integrated but not yet clean** — the local `llama3.2` (3B)
-shows a distinct protocol-garbling failure under the harness, unresolved.
-**Mistral remains untestable** — repeated OpenRouter rate-limiting, a
-configured BYOK key hasn't reliably fixed multi-phase runs, needs a
-dashboard-level check before further retries.
+pattern, now configurable via `SBR_HARNESS_MAX_TOKENS`. **Ollama local backend is integrated but not yet clean on either size
+tested** — `llama3.2` (3B) doesn't engage with the method's structure at
+all (capability ceiling); `llama3.1` (8B) understands there's a
+tool-calling protocol (confirmed via direct minimal-prompt probe) but
+narrates the call as text instead of issuing it under the harness's full
+system prompt — a distinct, more specific failure, not simply "still too
+small." Neither resolved yet. **Mistral is root-caused but still
+blocked**: the original BYOK key was confirmed broken (OpenRouter's own
+connection test failed), a fresh key was verified working independently
+against both Mistral's API and OpenRouter's Test button, and the harness
+*still* fails identically — OpenRouter's Activity dashboard confirms it
+isn't attempting the BYOK key at all. This is now an OpenRouter-side
+routing gap, not a key problem; deprioritized in favor of Qwen pending an
+OpenRouter support ticket.
 **Round 2 (Qwen, Mistral retry, larger Ollama, Perplexity with its own
-key): not yet run.**
+key): larger-Ollama item done (see above, found a new failure shape
+rather than a clean pass); Qwen in progress; Mistral retry done (see
+above, still blocked); Perplexity still needs its own key.**
