@@ -18,6 +18,8 @@ This method removes both. Not by asking you to try harder — by giving you
 a sequence you cannot skip, gates that can actually fail, and a legitimate
 way to report finding nothing.
 
+**[Read the full docs →](https://superbasic-research-docs.vercel.app)**
+
 Built by [Stefan Petcov](https://runwayservices.net) / Runway Services.
 Free to use and adapt.
 
