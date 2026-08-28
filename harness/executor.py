@@ -112,24 +112,61 @@ def _call_model(messages, model=DEFAULT_MODEL, backend=DEFAULT_BACKEND,
       access by default, so this is what actually closes that gap for
       them rather than just testing the cloud case again.
     """
-    if backend == "ollama":
-        resp = requests.post(
-            OLLAMA_URL,
-            json={"model": model, "messages": messages, "tools": TOOLS,
-                  "stream": False},
-            timeout=180,  # local inference on modest hardware is slow
-        )
-        if resp.status_code != 200:
-            raise HarnessError(f"Ollama call failed: HTTP {resp.status_code} "
-                                f"— {resp.text[:500]}")
-        return resp.json()  # already {"message": {...}} shaped
+    # A network-level failure (timeout, connection reset, DNS failure)
+    # during requests.post() raises requests.exceptions.RequestException,
+    # not an HTTP status code — found live during the red-team suite's
+    # first CI run (2026-08-28): a Mistral read-timeout propagated
+    # uncaught past every test file's `except executor.HarnessError`
+    # handler, crashing the whole script and surfacing as a raw Python
+    # traceback with exit code 1 — indistinguishable, to a caller
+    # checking only the exit code, from a genuine security finding.
+    # Catching it here and wrapping it in HarnessError, same as an HTTP
+    # error status, is what makes "external outage" and "real
+    # regression" actually distinguishable again for every caller.
+    try:
+        if backend == "ollama":
+            resp = requests.post(
+                OLLAMA_URL,
+                json={"model": model, "messages": messages, "tools": TOOLS,
+                      "stream": False},
+                timeout=180,  # local inference on modest hardware is slow
+            )
+            if resp.status_code != 200:
+                raise HarnessError(f"Ollama call failed: HTTP {resp.status_code} "
+                                    f"— {resp.text[:500]}")
+            return resp.json()  # already {"message": {...}} shaped
 
-    if backend == "mistral":
-        key = os.environ.get("MISTRAL_API_KEY")
+        if backend == "mistral":
+            key = os.environ.get("MISTRAL_API_KEY")
+            if not key:
+                raise HarnessError("MISTRAL_API_KEY is not set.")
+            resp = requests.post(
+                MISTRAL_URL,
+                headers={"Authorization": f"Bearer {key}",
+                         "Content-Type": "application/json"},
+                json={
+                    "model": model,
+                    "messages": messages,
+                    "tools": TOOLS,
+                    "max_tokens": max_tokens,
+                },
+                timeout=180,
+            )
+            if resp.status_code != 200:
+                raise HarnessError(f"Mistral call failed: HTTP {resp.status_code} "
+                                    f"— {resp.text[:500]}")
+            data = resp.json()
+            return {"message": data["choices"][0]["message"]}  # OpenAI-compatible shape
+
+        if backend != "openrouter":
+            raise HarnessError(f"Unknown backend: {backend!r} "
+                                f"(expected 'openrouter', 'mistral', or 'ollama')")
+
+        key = os.environ.get("OPENROUTER_API_KEY")
         if not key:
-            raise HarnessError("MISTRAL_API_KEY is not set.")
+            raise HarnessError("OPENROUTER_API_KEY is not set.")
         resp = requests.post(
-            MISTRAL_URL,
+            OPENROUTER_URL,
             headers={"Authorization": f"Bearer {key}",
                      "Content-Type": "application/json"},
             json={
@@ -141,35 +178,13 @@ def _call_model(messages, model=DEFAULT_MODEL, backend=DEFAULT_BACKEND,
             timeout=180,
         )
         if resp.status_code != 200:
-            raise HarnessError(f"Mistral call failed: HTTP {resp.status_code} "
+            raise HarnessError(f"OpenRouter call failed: HTTP {resp.status_code} "
                                 f"— {resp.text[:500]}")
         data = resp.json()
-        return {"message": data["choices"][0]["message"]}  # OpenAI-compatible shape
-
-    if backend != "openrouter":
-        raise HarnessError(f"Unknown backend: {backend!r} "
-                            f"(expected 'openrouter', 'mistral', or 'ollama')")
-
-    key = os.environ.get("OPENROUTER_API_KEY")
-    if not key:
-        raise HarnessError("OPENROUTER_API_KEY is not set.")
-    resp = requests.post(
-        OPENROUTER_URL,
-        headers={"Authorization": f"Bearer {key}",
-                 "Content-Type": "application/json"},
-        json={
-            "model": model,
-            "messages": messages,
-            "tools": TOOLS,
-            "max_tokens": max_tokens,
-        },
-        timeout=180,
-    )
-    if resp.status_code != 200:
-        raise HarnessError(f"OpenRouter call failed: HTTP {resp.status_code} "
-                            f"— {resp.text[:500]}")
-    data = resp.json()
-    return {"message": data["choices"][0]["message"]}
+        return {"message": data["choices"][0]["message"]}
+    except requests.exceptions.RequestException as e:
+        raise HarnessError(f"{backend} call failed at the network level "
+                            f"(timeout, connection reset, or similar): {e}") from e
 
 
 def _execute_tool_call(call, real_urls_seen: set) -> dict:
