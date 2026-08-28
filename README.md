@@ -1,0 +1,222 @@
+# SuperBasic™ Research
+
+**A program you run instead of improvising.**
+
+Left alone, a model asked to research something searches a little, decides
+that is enough, and writes something confident. Where it found nothing it
+produces a plausible sentence, because it has no permitted way to say *"I
+could not find this."* Both failures look identical to good work until
+someone acts on the output.
+
+This method removes both. Not by asking you to try harder — by giving you
+a sequence you cannot skip, gates that can actually fail, and a legitimate
+way to report finding nothing.
+
+Built by [Stefan Petcov](https://runwayservices.net) / Runway Services.
+Free to use and adapt.
+
+---
+
+## Install
+
+**Claude Code** — copy `sbr.py`, `SKILL.md` and `references/` into a skill
+folder:
+
+```bash
+git clone https://github.com/iamstefanp/superbasic-research.git
+cp -r superbasic-research ~/.claude/skills/superbasic-research
+```
+
+**claude.ai** — zip the repo (minus `tests/`, which is proof material, not
+part of the method) and upload it under Settings → Customize → Skills.
+
+**Anywhere else** — `SKILL.md` is plain markdown. Paste it into any chat
+that accepts a system prompt, then point it at `sbr.py`. It works in
+ChatGPT, Gemini, Cursor, and anything reading the Agent Skills standard.
+
+**As part of an agent** — the [SuperBasic™ Agents](https://github.com/iamstefanp/superbasic-agents)
+Researcher carries this method as its runtime. Use that repo if you want
+a fully constituted agent; use this one directly if you just want the
+method.
+
+---
+
+## How to run it
+
+**Read `sbr.py` and execute it.** It is the method. You are the runtime.
+
+It has no `main()` because you are `main()`. Every threshold in it is a
+number rather than an adjective, because prose invites interpretation and
+code invites execution.
+
+Open `references/` when the phase you are in tells you to. Do not work
+from memory of what they contain.
+
+---
+
+## The Laws
+
+Read these before anything else. Each is a prohibition, so each can be
+checked. Breaking one does not make the run worse — it makes it not a
+SuperBasic run.
+
+**Evidence**
+1. No claim without a source you can check.
+2. No source without a score.
+3. Never from memory. Memory can start a search. It can never end one.
+4. Common origin is one source. Three articles from one press release is
+   one source wearing three hats.
+
+**Honesty**
+5. Not finding is a finding. State what you looked for and did not get.
+6. Every claim carries its confidence.
+
+**Process**
+7. Mode is locked at the Brief. You do not lower the bar once you see how
+   hard it is.
+8. Phases run in order. No skipping, in any mode.
+9. A phase without its document did not happen.
+10. A failed gate sends you back. Never forward with a caveat.
+
+---
+
+## The eight phases
+
+```
+BRIEF → SCOPE → PLAN → INTEL → CHECK → VERIFY → SYNTHESIZE → REPORT
+                         ↑        │        │
+                         └────────┴────────┘
+                           the two legitimate loops
+```
+
+| | | |
+|---|---|---|
+| 1 | **BRIEF** | The question, the hypothesis, the clusters. Lock the mode. |
+| 2 | **SCOPE** | Bound the territory. What is out. How old is too old. |
+| 3 | **PLAN** | Name the sources. Write the queries. Map them to clusters. |
+| 4 | **INTEL** | Search. Capture, do not analyse. Log what you did not find. |
+| 5 | **CHECK** | Is the pool sufficient? Count, coverage, diversity. GO or back. |
+| 6 | **VERIFY** | Score every source. Test independence. Assign confidence. |
+| 7 | **SYNTHESIZE** | Observe, analyse, create. What did the hypothesis do? |
+| 8 | **REPORT** | Answer the question. Show the evidence. Disclose the gaps. |
+
+Order is not negotiable. Most research fails not because of bad sources
+but because of bad sequencing — SCOPE bounds the ground, PLAN picks the
+route across it, and you cannot plan a route across unbounded ground.
+
+**Looping back is the process working, not failing.**
+
+---
+
+## Modes
+
+Locked at Phase 1, never changed mid-run.
+
+| | LIGHT | HEAVY |
+|---|---|---|
+| Minimum sources | 3 | 5 |
+| CONFIRMED needs | 2 independent | 3 independent |
+| Source scoring | 6 dimensions, /30 | 8 dimensions, /40 |
+| Documents | 3 | 8 |
+
+LIGHT is not "skip the phases." It is the same eight phases at a lower
+source floor. The Brief is never skipped, in any mode.
+
+---
+
+## Confidence
+
+Every claim carries exactly one. Never TBD. Never blank. Never a bare
+assertion.
+
+- **CONFIRMED** — independently corroborated at the mode's threshold. Name them.
+- **LIKELY** — one credible source, uncontradicted. Name it.
+- **ESTIMATED** — inference. State the chain.
+- **UNKNOWN** — searched for, not found. A finding, not a failure.
+
+The calibration is the signature. Anything claiming to be SuperBasic that
+asserts flatly has drifted, and anyone reading can see it.
+
+---
+
+## Standards are enforced, not just requested
+
+`sbr.py`'s exit gates don't just check the numbers a run reports — they
+check whether the standard behind those numbers was actually applied:
+
+- A source's score has to come with a full per-dimension breakdown that
+  sums to the total — not a number chosen first and reverse-fitted.
+- Persona and media-mode tags are checked against the real twelve-persona
+  taxonomy and Paid/Owned/Earned, not accepted as any two distinct strings.
+- Every source needs a stated `origin_trace` — how independence was
+  actually established, not just a bare `origin` label standing in for
+  work that was never done.
+
+None of this can verify the underlying judgment was good. It closes the
+narrower gap: a run can no longer skip the standard and still pass the
+gate on a bare number.
+
+---
+
+## References
+
+Open at the phase named. These carry the depth; `sbr.py` carries the rules.
+
+| File | Open at |
+|---|---|
+| `references/decay-classes.md` | SCOPE — how old is too old for this subject |
+| `references/media-index.md` | PLAN — choosing source classes deliberately |
+| `references/source-personas.md` | INTEL and CHECK — tagging, and testing pool diversity |
+| `references/source-scoring.md` | VERIFY — the rubric, per dimension |
+| `references/independence-test.md` | VERIFY — before counting anything toward CONFIRMED |
+
+---
+
+## Tested, not just claimed
+
+`tests/` is a 10-card adversarial test battery, each card built around a
+specific trap the method has to survive — sources that look independent
+but share one origin, catalogs that genuinely disagree, entities that
+collide under one name, evidence that's paywalled rather than absent, the
+same brief run three times blind to check whether the method reproduces
+or just guesses well once. Every run is graded by an adversarial judge
+with no memory of writing the method, who independently re-fetches
+sources rather than trusting the transcript.
+
+The honest result is in there too: most cards passed, one (the
+replication card) did not clear its own bar, and that failure is logged
+in the open rather than smoothed over — see `tests/RESULTS.md` and
+`tests/FINDINGS-MEMO.md`. A method that only publishes its wins isn't
+verifiable; this one publishes the miss as well.
+
+```
+tests/
+  BATTERY.md            the 10 cards
+  RUBRIC.md              gates, scoring, verdict format
+  RESULTS.md              the registry, one row per graded run
+  CORRECTIONS.md           the change log — including a reopened finding
+  FINDINGS-MEMO.md          the one-page report card
+  capability-ledger.md      known-blocked domains, demonstrated per-run
+  answer-keys/V-T2.md       the one frozen ground-truth key
+  check_run.py, structural_precheck.py   mechanical checkers
+```
+
+---
+
+## When a run fails
+
+If a gate fails and the loops are exhausted, the run is **PARTIAL**. Say
+so at the top of the Report and name the gate that failed.
+
+A complete-looking report that failed a gate silently is the exact thing
+this method exists to prevent.
+
+---
+
+## License
+
+**CC BY-SA 4.0** — use it, adapt it, build on it. Share adaptations under
+the same terms.
+
+**SuperBasic™** is a trademark. The method is open; the name is not. See
+[TRADEMARK.md](TRADEMARK.md).
