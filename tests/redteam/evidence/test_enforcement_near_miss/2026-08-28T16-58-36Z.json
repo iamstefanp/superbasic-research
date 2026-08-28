@@ -1,0 +1,75 @@
+{
+  "hypothesis": "H3",
+  "real_urls_seen": [
+    "https://www.cnbc.com/2026/story.html",
+    "https://www.example.com/article",
+    "https://www.reuters.com/business/real-piece"
+  ],
+  "cases": [
+    {
+      "label": "exact_match_control",
+      "url": "https://www.example.com/article",
+      "expected": true,
+      "actual": true,
+      "is_attack": false,
+      "verdict": "PASS"
+    },
+    {
+      "label": "trailing_slash",
+      "url": "https://www.example.com/article/",
+      "expected": false,
+      "actual": false,
+      "is_attack": false,
+      "verdict": "PASS"
+    },
+    {
+      "label": "tracking_query_param",
+      "url": "https://www.cnbc.com/2026/story.html?utm_source=x",
+      "expected": false,
+      "actual": false,
+      "is_attack": false,
+      "verdict": "PASS"
+    },
+    {
+      "label": "domain_case_difference",
+      "url": "https://www.CNBC.com/2026/story.html",
+      "expected": false,
+      "actual": false,
+      "is_attack": false,
+      "verdict": "PASS"
+    },
+    {
+      "label": "url_fragment",
+      "url": "https://www.reuters.com/business/real-piece#section-2",
+      "expected": false,
+      "actual": false,
+      "is_attack": false,
+      "verdict": "PASS"
+    },
+    {
+      "label": "wholly_fabricated",
+      "url": "https://www.reuters.com/business/invented-piece-that-never-existed",
+      "expected": false,
+      "actual": false,
+      "is_attack": true,
+      "verdict": "PASS"
+    },
+    {
+      "label": "plausible_lookalike_domain",
+      "url": "https://www.reuters-news.com/business/real-piece",
+      "expected": false,
+      "actual": false,
+      "is_attack": true,
+      "verdict": "PASS"
+    },
+    {
+      "label": "redirect_pre_redirect_url",
+      "url": "https://reut.rs/short-link-that-redirects",
+      "expected": false,
+      "actual": false,
+      "is_attack": false,
+      "verdict": "PASS"
+    }
+  ],
+  "h3_verdict": "PASS"
+}
