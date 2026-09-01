@@ -1,0 +1,68 @@
+{
+  "hypothesis": "H4",
+  "questions": {
+    "factual_scientific": "What is the current world record time for the men's 100m sprint, and who holds it?",
+    "higher_ambiguity": "What was the primary cause of the 2026 slowdown in venture capital funding for AI startups?"
+  },
+  "results": [
+    {
+      "topic": "factual_scientific",
+      "question": "What is the current world record time for the men's 100m sprint, and who holds it?",
+      "model": "google/gemini-2.5-pro",
+      "n_sources": 4,
+      "n_retrieved_true": 4,
+      "n_flagged_false": 0,
+      "spot_checks": [
+        {
+          "url": "https://worldathletics.org/news/news/bolt-again-958-world-record-in-berlin-updat",
+          "reachable": true,
+          "status": 200,
+          "error": null
+        },
+        {
+          "url": "https://trackandfieldnews.com/records/mens-world-records",
+          "reachable": true,
+          "status": 200,
+          "error": null
+        }
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "topic": "factual_scientific",
+      "model": "mistral-large-latest",
+      "error": "Mistral call failed: HTTP 403 \u2014 {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":null,\"code\":\"1910\",\"raw_status_code\":403}",
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "topic": "higher_ambiguity",
+      "question": "What was the primary cause of the 2026 slowdown in venture capital funding for AI startups?",
+      "model": "google/gemini-2.5-pro",
+      "n_sources": 4,
+      "n_retrieved_true": 4,
+      "n_flagged_false": 0,
+      "spot_checks": [
+        {
+          "url": "https://valueaddvc.com/blog/state-of-vc-funding-2026",
+          "reachable": true,
+          "status": 200,
+          "error": null
+        },
+        {
+          "url": "https://tradingeconomics.com/united-states/interest-rate",
+          "reachable": true,
+          "status": 200,
+          "error": null
+        }
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "topic": "higher_ambiguity",
+      "model": "mistral-large-latest",
+      "error": "Mistral call failed: HTTP 403 \u2014 {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":null,\"code\":\"1910\",\"raw_status_code\":403}",
+      "verdict": "INCONCLUSIVE"
+    }
+  ],
+  "h4_verdict": "INCONCLUSIVE"
+}
